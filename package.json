@@ -6,6 +6,29 @@
   "license": "MIT",
   "author": "Igor Patrick Ponticelli <patrickigor.ip@gmail.com>",
   "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "keywords": [
     "react",
     "ui",
@@ -18,10 +41,19 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "build": "pnpm build:js && pnpm build:css",
+    "build:js": "tsdown",
     "build:css": "node scripts/build-css.mjs",
     "lint:css": "stylelint \"src/**/*.css\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
@@ -32,6 +64,7 @@
     "react-dom": "^19.2.8",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
+    "tsdown": "^0.22.14",
     "typescript": "^7.0.2"
   }
 }
