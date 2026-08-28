@@ -106,6 +106,13 @@
     --pui-font-size-xl: calc(var(--pui-font-size-base) * 1.25);
     --pui-font-size-2xl: calc(var(--pui-font-size-base) * 1.5);
     --pui-font-size-3xl: calc(var(--pui-font-size-base) * 1.875);
+
+    /* Display sizes. Large enough that line height and letter spacing have to
+       tighten with them, which Text handles per step rather than here. */
+    --pui-font-size-4xl: calc(var(--pui-font-size-base) * 2.25);
+    --pui-font-size-5xl: calc(var(--pui-font-size-base) * 3);
+    --pui-font-size-6xl: calc(var(--pui-font-size-base) * 3.75);
+    --pui-font-size-7xl: calc(var(--pui-font-size-base) * 4.5);
     --pui-font-weight-normal: 400;
     --pui-font-weight-medium: 500;
     --pui-font-weight-semibold: 600;
