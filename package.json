@@ -18,7 +18,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "typecheck": "echo \"(ainda não configurado)\""
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
