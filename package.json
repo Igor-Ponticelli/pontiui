@@ -18,15 +18,20 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "build:css": "node scripts/build-css.mjs",
+    "lint:css": "stylelint \"src/**/*.css\"",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "lightningcss": "^1.33.0",
     "prettier": "^3.9.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
     "typescript": "^7.0.2"
   }
 }

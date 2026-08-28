@@ -1,0 +1,46 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "custom-property-pattern": "^pui-[a-z0-9]+(-[a-z0-9]+)*$",
+    "selector-class-pattern": "^pui-[a-z0-9]+(-[a-z0-9]+)*$",
+    "declaration-property-value-allowed-list": {
+      "/^color$|^background$|^background-color$|^border.*-?color$|^outline-color$|^fill$|^stroke$/": [
+        "/^var\\(--pui-/",
+        "transparent",
+        "currentColor",
+        "inherit",
+        "none"
+      ],
+      "/^font-size$|^font-family$|^font-weight$|^line-height$|^letter-spacing$/": [
+        "/^var\\(--pui-/",
+        "inherit"
+      ],
+      "/^padding|^margin|^gap$|^row-gap$|^column-gap$/": [
+        "/^var\\(--pui-/",
+        "0",
+        "auto",
+        "inherit"
+      ],
+      "/^border-radius$|^border.*-?width$|^outline-width$|^outline-offset$|^box-shadow$/": [
+        "/^var\\(--pui-/",
+        "0",
+        "none",
+        "inherit"
+      ],
+      "/^transition-duration$|^animation-duration$|^transition-timing-function$|^animation-timing-function$|^z-index$/": [
+        "/^var\\(--pui-/",
+        "0",
+        "auto",
+        "inherit"
+      ]
+    }
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/tokens.css"],
+      "rules": {
+        "declaration-property-value-allowed-list": null
+      }
+    }
+  ]
+}
