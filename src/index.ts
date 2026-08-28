@@ -3,3 +3,5 @@ export { Divider } from "./components/Divider";
 export type { DividerProps } from "./components/Divider";
 export { Spinner } from "./components/Spinner";
 export type { SpinnerProps } from "./components/Spinner";
+export { Text } from "./components/Text";
+export type { TextProps, TextElement, TextSize, TextWeight, TextTone } from "./components/Text";

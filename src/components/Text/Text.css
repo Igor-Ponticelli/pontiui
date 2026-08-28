@@ -1,0 +1,152 @@
+@layer pui.reset {
+  /*
+   * No margin. Spacing belongs to whatever lays this out, so a Text drops into
+   * any container without bringing its own gaps. Headings need this explicitly,
+   * since user-agent stylesheets give h1-h6 a margin the library does not ship
+   * a global reset to remove (D-04).
+   */
+  .pui-text {
+    box-sizing: border-box;
+    margin: 0;
+  }
+}
+
+@layer pui.components {
+  .pui-text {
+    color: var(--pui-color-foreground);
+    font-family: var(--pui-font-sans);
+    font-size: var(--pui-font-size-md);
+    font-weight: var(--pui-font-weight-normal);
+    line-height: var(--pui-line-height-normal);
+    letter-spacing: var(--pui-letter-spacing-normal);
+  }
+
+  /*
+   * Each step sets size, line height and letter spacing together. Large text
+   * needs proportionally less leading and slightly negative tracking, so the
+   * three cannot be chosen independently without display sizes looking loose.
+   */
+  .pui-text[data-pui-size="xs"] {
+    font-size: var(--pui-font-size-xs);
+  }
+
+  .pui-text[data-pui-size="sm"] {
+    font-size: var(--pui-font-size-sm);
+  }
+
+  .pui-text[data-pui-size="md"] {
+    font-size: var(--pui-font-size-md);
+  }
+
+  .pui-text[data-pui-size="lg"] {
+    font-size: var(--pui-font-size-lg);
+  }
+
+  .pui-text[data-pui-size="xl"] {
+    font-size: var(--pui-font-size-xl);
+  }
+
+  .pui-text[data-pui-size="2xl"] {
+    font-size: var(--pui-font-size-2xl);
+    line-height: var(--pui-line-height-tight);
+  }
+
+  .pui-text[data-pui-size="3xl"] {
+    font-size: var(--pui-font-size-3xl);
+    line-height: var(--pui-line-height-tight);
+    letter-spacing: var(--pui-letter-spacing-tight);
+  }
+
+  .pui-text[data-pui-size="4xl"] {
+    font-size: var(--pui-font-size-4xl);
+    line-height: var(--pui-line-height-tight);
+    letter-spacing: var(--pui-letter-spacing-tight);
+  }
+
+  .pui-text[data-pui-size="5xl"] {
+    font-size: var(--pui-font-size-5xl);
+    line-height: var(--pui-line-height-tight);
+    letter-spacing: var(--pui-letter-spacing-tight);
+  }
+
+  .pui-text[data-pui-size="6xl"] {
+    font-size: var(--pui-font-size-6xl);
+    line-height: var(--pui-line-height-tight);
+    letter-spacing: var(--pui-letter-spacing-tight);
+  }
+
+  .pui-text[data-pui-size="7xl"] {
+    font-size: var(--pui-font-size-7xl);
+    line-height: var(--pui-line-height-tight);
+    letter-spacing: var(--pui-letter-spacing-tight);
+  }
+
+  .pui-text[data-pui-weight="regular"] {
+    font-weight: var(--pui-font-weight-normal);
+  }
+
+  .pui-text[data-pui-weight="medium"] {
+    font-weight: var(--pui-font-weight-medium);
+  }
+
+  .pui-text[data-pui-weight="semibold"] {
+    font-weight: var(--pui-font-weight-semibold);
+  }
+
+  .pui-text[data-pui-weight="bold"] {
+    font-weight: var(--pui-font-weight-bold);
+  }
+
+  .pui-text[data-pui-tone="default"] {
+    color: var(--pui-color-foreground);
+  }
+
+  .pui-text[data-pui-tone="muted"] {
+    color: var(--pui-color-muted-foreground);
+  }
+
+  .pui-text[data-pui-tone="primary"] {
+    color: var(--pui-color-primary);
+  }
+
+  .pui-text[data-pui-tone="danger"] {
+    color: var(--pui-color-danger);
+  }
+
+  .pui-text[data-pui-tone="success"] {
+    color: var(--pui-color-success);
+  }
+
+  /* Logical, so alignment follows the writing direction rather than assuming
+     left-to-right. */
+  .pui-text[data-pui-align="start"] {
+    text-align: start;
+  }
+
+  .pui-text[data-pui-align="center"] {
+    text-align: center;
+  }
+
+  .pui-text[data-pui-align="end"] {
+    text-align: end;
+  }
+
+  .pui-text[data-pui-truncate="true"] {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  /*
+   * Multi-line clamping still has no unprefixed implementation with real
+   * support, so the -webkit- trio is the only way to do this today. The line
+   * count arrives as a custom property set inline by the component, which is
+   * why the rule itself can live here rather than in a style attribute.
+   */
+  .pui-text[data-pui-clamp="true"] {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--pui-text-line-clamp);
+  }
+}
