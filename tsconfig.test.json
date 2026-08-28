@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  // `extends` inherits `exclude`, and the base config excludes test files so they
+  // stay out of the published types. This program is the one that must see them,
+  // so the exclusion is replaced rather than inherited.
+  "exclude": ["node_modules", "dist"],
+  "include": ["src", "test", "vitest.setup.ts", "vitest.config.ts"]
+}

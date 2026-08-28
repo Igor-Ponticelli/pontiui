@@ -8,6 +8,8 @@ storybook-static/
 
 # testes
 coverage/
+__screenshots__/
+.vitest-attachments/
 
 # ambiente
 .env

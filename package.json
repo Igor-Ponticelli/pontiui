@@ -40,13 +40,18 @@
     "node": ">=20"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint .",
     "build": "pnpm build:js && pnpm build:css",
     "build:js": "tsdown",
     "build:css": "node scripts/build-css.mjs",
     "lint:css": "stylelint \"src/**/*.css\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky"
   },
   "peerDependencies": {
     "react": ">=18",
@@ -56,15 +61,44 @@
     "access": "public"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
+    "axe-core": "^4.13.0",
+    "eslint": "^10.9.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.11.0",
+    "husky": "^9.1.7",
     "lightningcss": "^1.33.0",
+    "lint-staged": "^17.4.1",
+    "playwright": "^1.62.1",
     "prettier": "^3.9.6",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "stylelint": "^17.14.1",
     "stylelint-config-standard": "^40.0.0",
     "tsdown": "^0.22.14",
-    "typescript": "^7.0.2"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.68.0",
+    "vitest": "^4.1.11"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.css": [
+      "stylelint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,mjs,js}": [
+      "prettier --write"
+    ]
   }
 }
