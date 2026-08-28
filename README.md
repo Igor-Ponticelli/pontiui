@@ -31,13 +31,13 @@ Import the stylesheet once, at the root of your app:
 
 ```tsx
 // app/layout.tsx (Next.js) or src/main.tsx (Vite)
-import "pontiui/styles.css";
+import "@igor_ponti/pontiui/styles.css";
 ```
 
 Then import components anywhere:
 
 ```tsx
-import { Button, Modal, Input } from "pontiui";
+import { Button, Modal, Input } from "@igor_ponti/pontiui";
 
 export function Example() {
   return (
@@ -53,7 +53,7 @@ export function Example() {
 Every visual value is a CSS custom property. Override the ones you need in your own stylesheet, loaded **after** the PontiUI import:
 
 ```css
-@import "pontiui/styles.css";
+@import "@igor_ponti/pontiui/styles.css";
 
 :root {
   --pui-color-primary: #7c3aed;

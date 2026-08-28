@@ -27,40 +27,50 @@ Completed before this plan was written.
 
 ---
 
-## Phase 1 - Styling foundation and design tokens `[ ]`
+## Phase 1 - Styling foundation and design tokens `[x]`
 
 Goal: a CSS pipeline producing one namespaced stylesheet, and a token system consumers
 can override without a rebuild. Governed by D-19 through D-23.
 
-- [ ] Install `lightningcss` as a dev dependency (D-21)
-- [ ] Install `clsx` as the only runtime dependency (merging the consumer's `className`)
-- [ ] Create `src/styles/tokens.css` with the two-tier token system:
-      primitives (`--pui-color-brand-500`) feeding semantics (`--pui-color-primary`)
-- [ ] Define the initial token set: colors, typography, spacing, radii, shadows,
+- [x] Install `lightningcss` as a dev dependency (D-21)
+- [x] Write `src/utils/cn.ts` by hand rather than depending on `clsx`. With variants as
+      data attributes there is no conflict to resolve, so it is a filter-and-join and
+      DEP-4 applies. **The library has zero runtime dependencies**
+- [x] Create `src/styles/tokens.css` with the two-tier token system:
+      primitives (`--pui-color-violet-600`) feeding semantics (`--pui-color-primary`)
+- [x] Define the initial token set: colors, typography, spacing, radii, shadows,
       z-index, motion durations
-- [ ] Add the two scaling tokens from D-22: `--pui-font-size-base` and `--pui-space-unit`,
+- [x] Add the two scaling tokens from D-22: `--pui-font-size-base` and `--pui-space-unit`,
       with spacing, radii and control heights derived from the latter
-- [ ] Declare the layer order once in `src/styles/index.css`:
-      `@layer pui.reset, pui.base, pui.components;` (D-23, ST-12)
-- [ ] Define the shared focus-ring declaration in `pui.base` (ST-10)
-- [ ] Create `src/utils/cn.ts` as a thin `clsx` wrapper for merging the consumer's
-      `className`; conflict resolution is the cascade's job (D-23)
-- [ ] Add the `build:css` script: Lightning CSS over `src/styles/index.css` plus every
-      `<Component>.css`, minified, emitted as `dist/styles.css`
-- [ ] Decide and document the concatenation order of component stylesheets, so the build
-      is deterministic and diffable
-- [ ] Install and configure Stylelint with the rule that enforces ST-4: no literal value
-      in a visual property outside `tokens.css`. **This is the mitigation D-19 accepted;
-      without it ST-4 is only an intention**
-- [ ] Add a `lint:css` script and wire Stylelint into `format`/CI
-- [ ] Document every token in `docs/theming.md`, including the relative root font-size
+- [x] Declare the layer order once in `src/styles/index.css`:
+      `@layer pui.tokens, pui.reset, pui.base, pui.components;` (D-23, ST-12)
+- [x] Define the shared focus-ring declaration in `pui.base` (ST-10)
+- [x] Add the `build:css` script: Lightning CSS bundles the `@import` chain from
+      `src/styles/index.css`, minified, emitted as `dist/styles.css`
+- [x] Concatenation order is the `@import` order declared in `index.css`, not a glob, so
+      the output is deterministic and a diff of `dist/styles.css` is readable
+- [x] The build asserts the emitted cascade layer order and fails if it changes. The
+      `@layer` statement is load-bearing: without it the order falls back to import
+      order and the D-23 override contract quietly stops holding
+- [x] Install and configure Stylelint with the rule that enforces ST-4: no literal value
+      in a visual property outside `tokens.css`
+- [x] Add a `lint:css` script (wiring it into CI is Phase 3, where CI is created)
+- [x] Document every token in `docs/theming.md`, including the relative root font-size
       form from D-22 and the override contract from D-23
 
-**Exit criteria:** a scratch HTML file using `class="pui-button" data-pui-variant="primary"`
-renders correctly from the built stylesheet; overriding `--pui-color-primary` in a
-consumer stylesheet changes the output with no rebuild; an unlayered consumer rule
-overrides a library rule without `!important`; and Stylelint fails on a deliberately
-hardcoded `padding: 13px`.
+**Exit criteria met.** Verified against a scratch page loading only the built
+`dist/styles.css`:
+
+- every token resolves, in light and dark, switched by `data-pui-theme`
+- redefining `--pui-color-primary` in a consumer stylesheet changes the output with no
+  rebuild
+- an unlayered consumer rule overrides a library rule from `@layer pui.base` at lower
+  specificity and without `!important`
+- `--pui-space-unit` and `--pui-font-size-base` scale density and type independently
+- `pnpm lint:css` fails on `padding: 13px`, `color: #7c3aed`, `border-radius: 6px` and
+  `font-size: 14px`, and passes on the token equivalents
+
+Output: 6.13 kB unminified-source / minified, layers emitted in the declared order.
 
 ---
 
@@ -84,7 +94,7 @@ packaging bugs surface now instead of at release time.
 - [ ] Add `publishConfig.access` if a scoped name is chosen (see D-11)
 
 **Exit criteria:** `pnpm build` emits `dist/` and a separate project can install the
-tarball, import `pontiui/styles.css` and render `<Divider />` correctly.
+tarball, import `@igor_ponti/pontiui/styles.css` and render `<Divider />` correctly.
 
 ---
 
