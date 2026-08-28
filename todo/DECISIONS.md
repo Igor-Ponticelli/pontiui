@@ -77,7 +77,7 @@ weight and impose a choice on every user.
 ### D-19 - Styling mechanism: hand-authored CSS `[decided]`
 
 Components are styled with CSS written by hand, one `<Component>.css` per component,
-compiled into a single stylesheet.
+compiled into a single stylesheet. The library has no runtime dependencies.
 
 The markup a component produces is public surface. The consumer reads it in their
 inspector and cannot hide it, so a component puts one class there and keeps the styling
@@ -111,8 +111,10 @@ A component emits exactly one class, `pui-<component>`. Variant, size and state 
 .pui-button[data-pui-variant="primary"] { ... }
 ```
 
-Props map to attributes directly, so a variant needs no runtime helper. `cn()` is a thin
-`clsx` wrapper whose only job is merging the consumer's `className`.
+Props map to attributes directly, so a variant needs no runtime helper. `cn()` only has
+to append the consumer's `className` after the component's own class, which is a one-line
+filter-and-join. DEP-4 rules out a dependency at that size, so the library ships with
+**zero runtime dependencies**.
 
 The `pui-` prefix on the attributes is load-bearing, not decoration. R-4 spreads rest
 props onto the same element, so an unprefixed `data-size` passed by a consumer for their
@@ -176,7 +178,7 @@ _Cost accepted:_ two knobs to explain instead of one.
 All library CSS is emitted inside cascade layers:
 
 ```css
-@layer pui.reset, pui.base, pui.components;
+@layer pui.tokens, pui.reset, pui.base, pui.components;
 ```
 
 Anything the consumer writes sits outside those layers and therefore wins, regardless of
@@ -200,19 +202,21 @@ of hashing the names - and D-19 rejected hashing.
 The cascade also arbitrates conflicts between the library's rules and the consumer's, so
 no runtime class-merging logic is needed to do it.
 
+### D-11 - npm package name: `@igor_ponti/pontiui` `[decided]`
+
+Published under the owner's npm scope. `publishConfig.access: "public"` is required,
+since scoped packages default to restricted.
+
+_Rejected:_ the bare name `pontiui`, which was also free at the time of deciding. The
+scope keeps room for a family (`@igor_ponti/pontiui-icons`) without racing anyone for a
+second bare name, and the backlog already contemplates a separate icon package.
+
+_Prerequisite for Phase 13:_ the `igor_ponti` npm account or organisation must exist and
+be owned by the publisher. Publishing into a scope you do not own fails at the registry.
+
 ---
 
 ## Open
-
-### D-11 - npm package name `[open]` - blocks Phase 13
-
-Is `pontiui` available on npm, or do we publish as `@ponticelli/pontiui`?
-
-Run `npm view pontiui`. A `404` means it is free. The answer changes the `name` field,
-whether `publishConfig.access: "public"` is required, and every install snippet in the
-docs.
-
-**Decide before:** the first publish. Ideally now, to avoid rewriting documentation.
 
 ### D-12 - Does a form control own its label and error text? `[open]` - blocks Phase 7
 

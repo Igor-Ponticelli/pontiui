@@ -150,9 +150,10 @@ D-22 (scaling axes) and D-23 (cascade layers). Read those before arguing with a 
 - **ST-11** Dark theme is expressed only through token values under
   `[data-pui-theme="dark"]`. Components must not contain dark-mode conditionals, and a
   component stylesheet must never mention a color that is not a token.
-- **ST-12** All library CSS lives inside `@layer pui.reset`, `@layer pui.base` or
-  `@layer pui.components`. Nothing is emitted outside a layer, because unlayered CSS
-  beats layered CSS and would take the override guarantee in D-23 away from consumers.
+- **ST-12** All library CSS lives inside `@layer pui.tokens`, `@layer pui.reset`,
+  `@layer pui.base` or `@layer pui.components`. Nothing is emitted outside a layer,
+  because unlayered CSS beats layered CSS and would take the override guarantee in D-23
+  away from consumers. The build asserts the emitted order and fails if it changes.
 - **ST-13** Specificity ceiling: one class plus attributes. If a rule needs more, the
   markup needs a class, not the selector more weight.
 
