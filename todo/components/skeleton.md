@@ -1,6 +1,7 @@
 # Skeleton
 
-**Status:** `[ ]` not started
+**Status:** `[x]` implemented and tested. Stories and the formal a11y sign-off
+still pending - Phases 4 and 5.
 **Phase:** 5
 **Depends on:** radius and color tokens
 **Blocked by:** nothing
@@ -48,7 +49,12 @@ None.
 2. `lines` greater than one renders that many stacked lines with consistent spacing, and
    the last line is shortened to look like natural text.
 3. `animation: "none"` renders a static placeholder.
-4. Reduced motion disables the animation regardless of the prop, matching Spinner.
+4. Reduced motion disables the animation regardless of the prop. **This deliberately
+   differs from Spinner, which keeps pulsing.** The governing rule, recorded while
+   implementing this component: _motion is removed under reduced motion unless the
+   motion is itself the information_. A spinner that stops has lost the only thing it
+   communicates; a skeleton that stops has lost nothing, because the shape is the
+   message and the shape is still there.
 5. Contains no text and is never announced individually.
 
 ## Implementation notes
@@ -70,15 +76,28 @@ None.
 
 ## Tokens used
 
-`--pui-color-border` or a dedicated `--pui-color-skeleton`, radius scale, motion
-duration.
+`--pui-color-skeleton`, `--pui-radius-{sm,md,lg,full}`, `--pui-space-{2,10,16}`,
+`--pui-duration-pulse`, `--pui-easing-standard`.
+
+Two tokens were added. `--pui-color-skeleton` got its own role rather than reusing
+`--pui-color-border`, so a consumer can tune loading surfaces without moving every
+border. `--pui-duration-pulse` (1600ms) is shared with Spinner's reduced-motion
+fallback, which previously ran at `--pui-duration-slow` - a ~1.5 Hz opacity cycle that
+read as flashing, which is the opposite of what a reduced-motion fallback is for.
+
+Height for the `text` variant is `1em`, not a token: the point is that it follows the
+surrounding font size so the placeholder lines up with the text it replaces.
 
 ## Tests
 
 - Each variant renders with expected shape semantics
-- `lines` renders the correct count
-- Hidden from the accessibility tree
+- `lines` renders the correct count, and is ignored on non-text variants
+- The last line of a stack is shorter than the others
+- Hidden from the accessibility tree, and contributes no text content even inside an
+  `aria-busy` container
 - `animation: "none"` disables the animation
+- Arbitrary `width` / `height` pass through, and a consumer `style` survives beside them
+- Forwards its ref, merges a consumer `className`, spreads unknown props
 
 ## Documentation
 
@@ -88,14 +107,23 @@ responsibility prominently.
 
 ## Open questions
 
-- Should a `Skeleton.Group` exist that sets `aria-busy` automatically, or is that
-  scope creep for 0.1.0?
-- Pulse or shimmer as the default animation?
-- **Already settled by Spinner:** under `prefers-reduced-motion: reduce` the animation
-  becomes an opacity pulse rather than stopping, whichever of pulse or shimmer is chosen
-  for the default. X-2 requires the two loading components to behave identically here.
-- **Already settled by Divider and Spinner:** the prop that controls whether the element
-  reaches assistive technology is named `decorative` (X-1).
+All resolved during implementation.
+
+- ~~Should a `Skeleton.Group` exist that sets `aria-busy` automatically?~~ No, and not
+  only for scope. Its entire job would be to set one attribute on an element the consumer
+  already owns, which is the wrapper C-5 rules out. The `aria-busy` responsibility is
+  documented on the component instead.
+- ~~Pulse or shimmer as the default animation?~~ Pulse. Opacity animates on the
+  compositor; a shimmer animates `background-position` and repaints. On a page showing
+  twenty placeholders that difference is the entire cost. A shimmer would also need a
+  gradient that no single token can express.
+- ~~Reduced motion follows Spinner's pulse.~~ **Corrected.** That note was written while
+  implementing Spinner, before this component had been analysed, and it was wrong.
+  Skeleton stops instead. See Behaviour 4 for the rule that separates them.
+- ~~The prop controlling assistive-technology exposure is named `decorative`.~~ Not
+  applicable: a skeleton carries no information in any configuration, so it is
+  unconditionally `aria-hidden` and needs no prop at all. The naming rule stands for
+  components where the choice exists.
 
 ## Definition of done
 

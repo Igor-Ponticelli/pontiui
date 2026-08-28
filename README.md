@@ -107,7 +107,7 @@ See [Theming](./docs/theming.md) for the full token reference.
 | Text      | alpha   |
 | Divider   | alpha   |
 | Spinner   | alpha   |
-| Skeleton  | planned |
+| Skeleton  | alpha   |
 | Modal     | planned |
 | Toast     | planned |
 | Navbar    | planned |

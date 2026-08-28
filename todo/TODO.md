@@ -189,7 +189,7 @@ Zero-dependency components. Each one follows the full agent pipeline.
   stories to be complete against its full plan)
 - [~] Text (implemented; needs tests, a11y sign-off and stories)
 - [~] Spinner (implemented; needs tests, a11y sign-off and stories)
-- [ ] Skeleton
+- [~] Skeleton (implemented and tested; needs stories and a11y sign-off)
 
 **Exit criteria:** all four have plan, implementation, tests, a11y sign-off and stories.
 
