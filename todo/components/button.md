@@ -75,7 +75,9 @@ when placed side by side. This is a hard constraint on the token values.
 
 ## Implementation notes
 
-- Variants live in `Button.variants.ts` using CVA with `defaultVariants`.
+- Variants are `data-pui-variant` and `data-pui-size` on the `<button>`, styled in
+  `Button.css`. Defaults are applied in the component, so the attributes are always
+  present and the CSS never needs a bare-class fallback.
 - Ref targets the `<button>` element.
 - `disabled || loading` is computed once and applied to both the native attribute and
   the interaction guards.

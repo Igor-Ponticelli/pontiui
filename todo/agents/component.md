@@ -14,7 +14,7 @@ Implements a component from its plan.
 ```text
 src/components/<Component>/
 ├── <Component>.tsx
-├── <Component>.variants.ts     when the component has variants
+├── <Component>.css             styles, in @layer pui.components
 ├── <Component>.types.ts        only when types exceed ~30 lines
 └── index.ts
 ```
@@ -25,7 +25,8 @@ to `src/styles/tokens.css` if the design needs a value that does not exist yet.
 ## Does
 
 - Implements exactly the API described in the plan.
-- Uses CVA for variants, `cn()` for merging, semantic tokens for every visual value.
+- Writes hand-authored CSS, maps variants to data attributes, uses semantic tokens for
+  every visual value (D-19, D-20).
 - Forwards refs, sets `displayName`, spreads rest props, merges `className` last.
 - Adds `"use client"` only if the component uses client-only React features.
 - Writes TSDoc on every public prop while writing the prop, not afterwards.
@@ -38,7 +39,7 @@ to `src/styles/tokens.css` if the design needs a value that does not exist yet.
 - Add props not in the plan. Propose them by updating the plan first.
 - Add a runtime dependency.
 - Modify another component.
-- Touch the build, `package.json`, `tsconfig` or the token prefix.
+- Touch the build, `package.json`, `tsconfig`, the token prefix or the layer order.
 - Create an abstraction for a single use case.
 
 ## Checklist before handoff
@@ -47,8 +48,10 @@ to `src/styles/tokens.css` if the design needs a value that does not exist yet.
 - [ ] Ref forwarded to the correct element, `displayName` set
 - [ ] Rest props spread; `className` merged through `cn()` last
 - [ ] No hardcoded colors, spacing, radii, durations (ST-4)
-- [ ] All classes carry the `pui:` prefix
-- [ ] Focus ring uses the shared focus utility
+- [ ] Exactly one `pui-` class on the element; variants and sizes are data attributes
+- [ ] Every rule is inside a `pui.*` layer and starts with the component's own class
+- [ ] Focus ring uses the shared focus-ring declaration
+- [ ] `pnpm lint:css` passes (ST-4 is enforced there, not in review)
 - [ ] `"use client"` present if and only if required
 - [ ] Controlled and uncontrolled both work, if the component is stateful
 - [ ] TSDoc on every exported prop
@@ -60,7 +63,7 @@ to `src/styles/tokens.css` if the design needs a value that does not exist yet.
 
 - Adding a "flexible" prop nobody asked for.
 - Reimplementing a hook that already exists in `src/hooks/`.
-- Using an arbitrary Tailwind value because the token was missing, instead of adding the
-  token.
+- Writing a literal value because the token was missing, instead of adding the token.
+- Adding a second class to express a variant that belongs in a data attribute.
 - Swallowing the consumer's event handler instead of calling it first.
 - Marking a purely presentational component as a client component out of habit.

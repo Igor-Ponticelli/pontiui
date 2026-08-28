@@ -18,8 +18,10 @@ around it silently: open the discussion, change the rule, note it in `DECISIONS.
   renders a single DOM element: `extends React.ButtonHTMLAttributes<HTMLButtonElement>`.
 - **TS-5** Use `import type` for type-only imports (`verbatimModuleSyntax` requires it).
 - **TS-6** Prefer union literals over enums: `size?: "sm" | "md" | "lg"`.
-- **TS-7** Variant prop types are derived from CVA with `VariantProps<typeof x>`.
-  Never hand-write a union that duplicates the CVA config.
+- **TS-7** Variant prop types are union literals declared once and exported
+  (`type ButtonVariant = "primary" | "secondary" | "ghost" | "danger"`). Every member
+  must have a matching `[data-pui-variant="..."]` rule in the component's CSS - an
+  unstyled member is a bug the type system cannot catch, so it is a review item.
 - **TS-8** Do not widen a prop type to accommodate one caller. Narrow types are the
   product.
 - **TS-9** Never reference Node, Vitest or Storybook globals in `src/` files that ship.
@@ -51,8 +53,8 @@ around it silently: open the discussion, change the rule, note it in `DECISIONS.
 ## Architecture (A)
 
 - **A-1** One component per folder under `src/components/<Component>/`.
-- **A-2** Required files: `<Component>.tsx`, `index.ts`. Add `<Component>.variants.ts`
-  when there are variants, `<Component>.types.ts` when types exceed roughly 30 lines.
+- **A-2** Required files: `<Component>.tsx`, `<Component>.css`, `index.ts`. Add
+  `<Component>.types.ts` when types exceed roughly 30 lines.
 - **A-3** Tests and stories live beside the component, not in a separate top-level tree.
 - **A-4** Logic reused by two or more components moves to `src/hooks/` or `src/utils/`.
   Two occurrences is the threshold. **Do not abstract on the first occurrence.**
@@ -79,7 +81,11 @@ around it silently: open the discussion, change the rule, note it in `DECISIONS.
   (`xs`, `xl`), never rename.
 - **N-7** Visual variants use the same vocabulary library-wide: `primary`, `secondary`,
   `ghost`, `danger`. A component may support a subset, never a synonym.
-- **N-8** Data attributes for styling states are `data-pui-<state>`.
+- **N-8** Styling data attributes are `data-pui-<name>`, covering variant, size and
+  state alike: `data-pui-variant`, `data-pui-size`, `data-pui-loading`. The prefix is
+  load-bearing, not decoration - rest props are spread onto the same element (R-4), so an
+  unprefixed `data-size` passed by a consumer for their own purposes would silently
+  restyle the component.
 - **N-9** CSS custom properties are `--pui-<category>-<name>`.
 
 ---
@@ -112,25 +118,43 @@ around it silently: open the discussion, change the rule, note it in `DECISIONS.
 
 ## Styling (ST)
 
-- **ST-1** All styling is Tailwind utilities with the `pui:` prefix. No CSS Modules, no
-  styled-components, no inline `style` except for genuinely dynamic values (a computed
-  transform, a user-supplied token override).
-- **ST-2** Variants are declared with CVA in `<Component>.variants.ts`. Conditional
-  class strings assembled with template literals are not allowed.
-- **ST-3** Class merging goes through `cn()` so `tailwind-merge` can resolve conflicts.
-- **ST-4** **No hardcoded design values.** Never `pui:bg-[#7c3aed]`, `pui:p-[13px]`,
-  `pui:rounded-[6px]`. Every color, space, radius, shadow, font size and duration comes
-  from a token. If the token does not exist, add it to `tokens.css` first.
-- **ST-5** No arbitrary variants or values as a shortcut around a missing token.
-- **ST-6** Never write global selectors. A component styles itself and its own subtree.
-- **ST-7** No `!important` and no `pui:!` utilities in library code.
-- **ST-8** Do not ship a CSS reset. Each component applies the resets it needs as
-  utilities on its own elements (`pui:appearance-none`, `pui:box-border`).
+Governed by D-19 (hand-authored CSS), D-20 (data attributes), D-21 (Lightning CSS),
+D-22 (scaling axes) and D-23 (cascade layers). Read those before arguing with a rule here.
+
+- **ST-1** All styling is hand-authored CSS in `<Component>.css`, beside the component.
+  No utility framework, no CSS Modules, no styled-components, no inline `style` except
+  for genuinely dynamic values (a computed transform, a user-supplied token override).
+- **ST-2** A component emits exactly **one** class: `pui-<component>`, in kebab-case.
+  Subelements that need styling get their own single class (`pui-modal-header`). Never
+  two classes on one element to express one thing.
+- **ST-3** Variants, sizes and states are **data attributes**, selected in CSS:
+  `.pui-button[data-pui-variant="primary"]` (N-8). Never build class strings in
+  TypeScript, with template literals or otherwise.
+- **ST-4** **No hardcoded design values.** Never `color: #7c3aed`, `padding: 13px`,
+  `border-radius: 6px`. Every color, space, radius, shadow, font size and duration is a
+  `var(--pui-*)`. If the token does not exist, add it to `tokens.css` first. Enforced by
+  Stylelint - if you find yourself wanting to disable that rule, the answer is a new
+  token, not an exception.
+- **ST-5** No literal value as a shortcut around a missing token. This is ST-4 restated
+  because it is the rule most likely to be broken at seven in the evening.
+- **ST-6** Every selector starts with the component's own class. No element selectors
+  (`button { }`), no global selectors, no styling of a child the component did not
+  render. A component styles itself and its own subtree, nothing else.
+- **ST-7** No `!important` in library code. Cascade layers (ST-12) make it unnecessary;
+  reaching for it means a selector is wrong.
+- **ST-8** Do not ship a global reset. Each component declares the resets it needs in
+  `@layer pui.reset`, scoped to its own class (`.pui-button { appearance: none; }`).
 - **ST-9** Respect `prefers-reduced-motion` on anything that animates.
-- **ST-10** Focus styling uses the shared focus-ring token utility, identical across all
+- **ST-10** Focus styling uses the shared focus-ring declaration, identical across all
   components. Never remove focus visibility without an equivalent replacement.
 - **ST-11** Dark theme is expressed only through token values under
-  `[data-pui-theme="dark"]`. Components must not contain dark-mode conditionals.
+  `[data-pui-theme="dark"]`. Components must not contain dark-mode conditionals, and a
+  component stylesheet must never mention a color that is not a token.
+- **ST-12** All library CSS lives inside `@layer pui.reset`, `@layer pui.base` or
+  `@layer pui.components`. Nothing is emitted outside a layer, because unlayered CSS
+  beats layered CSS and would take the override guarantee in D-23 away from consumers.
+- **ST-13** Specificity ceiling: one class plus attributes. If a rule needs more, the
+  markup needs a class, not the selector more weight.
 
 ---
 
@@ -240,7 +264,7 @@ Do not do any of the following without an explicit, recorded decision:
 1. Add a runtime dependency.
 2. Introduce a second styling mechanism.
 3. Change the build, `exports` map or `tsconfig`.
-4. Change the token naming scheme or the `pui` prefix.
+4. Change the token naming scheme, the `pui` class prefix or the data-attribute convention.
 5. Add a required provider or context that components need in order to render.
 6. Break an existing public API.
 7. Add a new top-level folder under `src/`.

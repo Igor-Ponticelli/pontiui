@@ -12,23 +12,21 @@ first, change the status to `Decided`, then reference the ID.
 
 ### D-01 - Distribution model: precompiled CSS `[decided]`
 
-PontiUI ships `dist/styles.css`, compiled by Tailwind at build time. Consumers import
-it once and do not need Tailwind themselves.
+PontiUI ships `dist/styles.css`, compiled at build time. Consumers import it once and
+need no CSS tooling of their own.
 
-_Rejected:_ shipping source and letting the consumer's Tailwind scan `node_modules`.
-It forces the consumer onto the same Tailwind major version and onto Tailwind at all.
+_Rejected:_ shipping source for the consumer's build to compile. It forces the consumer
+onto a specific toolchain, and onto having one at all.
 
-_Cost accepted:_ the stylesheet contains every utility used by the whole library, not
-only by the components a given consumer imports. There is no clean fix for this today.
-Estimated at well under 20 kB minified for eleven components.
+_Cost accepted:_ the stylesheet carries every component, not only the ones a given
+consumer imports. Estimated at well under 20 kB minified for eleven components. D-21
+records why the per-component alternative was still rejected.
 
-### D-02 - Class prefix: `pui` `[decided]`
+### D-02 - Namespace prefix: `pui` `[decided]`
 
-`@import "tailwindcss" prefix(pui)`. Every emitted class is `pui:flex`, every theme
-variable is `--pui-*`. This is the primary defense against collisions with the
-consumer's own Tailwind, whose scale values may differ from ours.
-
-_Cost accepted:_ slightly noisier class strings in source.
+Every class the library emits starts with `pui-` (`pui-button`), every custom property
+with `--pui-` (`--pui-color-primary`), every styling attribute with `data-pui-`. This is
+the primary defense against collisions with the consumer's own CSS.
 
 ### D-03 - Two-tier design tokens `[decided]`
 
@@ -36,12 +34,13 @@ Primitive tokens (`--color-brand-500`) feed semantic tokens (`--color-primary`).
 Components reference **only** semantic tokens. Rebranding is then a matter of
 redefining a handful of semantic variables.
 
-### D-04 - No Preflight `[decided]`
+### D-04 - No global reset `[decided]`
 
-The library imports only the `theme` and `utilities` layers. Tailwind's global reset is
-not shipped, because it would alter elements the library does not own.
+The library never ships a reset that touches elements it does not own. Importing
+`styles.css` must produce zero visual change to any element PontiUI did not render.
 
-_Cost accepted:_ each component applies its own resets as utilities.
+Each component declares the resets it needs inside `@layer pui.reset`, scoped to its own
+class.
 
 ### D-05 - React + TypeScript `[decided]`
 
@@ -74,6 +73,132 @@ to render. Requiring a provider to render a button is unnecessary friction.
 
 Icons are `ReactNode` props supplied by the consumer. Bundling an icon set would add
 weight and impose a choice on every user.
+
+### D-19 - Styling mechanism: hand-authored CSS `[decided]`
+
+Components are styled with CSS written by hand, one `<Component>.css` per component,
+compiled into a single stylesheet.
+
+The markup a component produces is public surface. The consumer reads it in their
+inspector and cannot hide it, so a component puts one class there and keeps the styling
+in CSS.
+
+_Rejected:_ a utility framework. It moves the whole style declaration into the consumer's
+markup, where eighteen classes on a button bury the consumer's own code. D-01 already
+compiles the stylesheet at build time, so the consumer would carry that cost without ever
+seeing the benefit.
+
+_Rejected:_ CSS Modules. Hashed names (`pui-button-x7f2a`) are as unreadable in the DOM as
+a utility list, and defeat the same goal.
+
+_Cost accepted:_ ST-4 stops being enforced by the absence of a syntax for it. A Stylelint
+rule rejecting literal values outside `tokens.css` takes over, and it has to exist before
+the first component - without it, ST-4 is only an intention.
+
+_Cost accepted:_ one class shows less in devtools than a full utility list, and Modal and
+Carousel are real CSS work.
+
+### D-20 - Variants are data attributes `[decided]`
+
+A component emits exactly one class, `pui-<component>`. Variant, size and state are
+`data-pui-*` attributes on that same element, selected in CSS:
+
+```html
+<button class="pui-button" data-pui-variant="primary" data-pui-size="md"></button>
+```
+
+```css
+.pui-button[data-pui-variant="primary"] { ... }
+```
+
+Props map to attributes directly, so a variant needs no runtime helper. `cn()` is a thin
+`clsx` wrapper whose only job is merging the consumer's `className`.
+
+The `pui-` prefix on the attributes is load-bearing, not decoration. R-4 spreads rest
+props onto the same element, so an unprefixed `data-size` passed by a consumer for their
+own tooling would silently restyle the component.
+
+_Rejected:_ BEM (`pui-button pui-button--primary pui-button--md`). Three classes to say
+what two attributes say, and `data-pui-variant="primary"` reads as intent where
+`pui-button--primary` reads as a name.
+
+_Cost accepted:_ the attributes are visible in the DOM. Two readable attributes is the
+target, not a bare element.
+
+### D-21 - CSS toolchain: Lightning CSS, single stylesheet `[decided]`
+
+`lightningcss` compiles `src/styles/index.css` and every `<Component>.css` into one
+minified `dist/styles.css`. It covers nesting, minification and browser targets in a
+single dependency, and it is fast enough to sit in a watch loop.
+
+_Rejected:_ PostCSS with a plugin chain (`postcss-nesting`, `autoprefixer`, `cssnano`).
+Four dependencies and a config file to do what one dependency does.
+
+_Rejected:_ per-component stylesheets, imported individually or tree-shaken by the
+consumer's bundler. It would repair the cost accepted in D-01, but at the price of two
+supported import paths, two things to document and two ways for a consumer to get it
+wrong, saving single-digit kilobytes across eleven components. One import, and done.
+
+_Note:_ Lightning CSS `targets` is where D-18 (browser support baseline) materializes as
+configuration. **D-18 remains open** - this decision fixes where the answer lives, not
+what it is.
+
+### D-22 - Two scaling axes: type and density `[decided]`
+
+Typography scales from the root font size. Spacing, radii and control heights scale from
+a separate unit, so a consumer can enlarge text without inflating every control.
+
+```css
+--pui-font-size-base: 1rem; /* follows the root font size */
+--pui-space-unit: 0.25rem; /* density, adjustable on its own */
+```
+
+Documented scaling always uses a relative root font size, never a fixed one:
+
+```css
+html {
+  font-size: 112.5%;
+} /* correct - 18px on a 16px default, and still relative */
+html {
+  font-size: 18px;
+} /* wrong - overrides the reader's own browser setting */
+```
+
+The fixed form silently defeats a reader who raised their default font size for low
+vision. Documenting the wrong one teaches every consumer to break accessibility at the
+root of their application, so the correct form belongs in `docs/theming.md` rather than
+being left for them to work out.
+
+_Cost accepted:_ two knobs to explain instead of one.
+
+### D-23 - Override contract: cascade layers `[decided]`
+
+All library CSS is emitted inside cascade layers:
+
+```css
+@layer pui.reset, pui.base, pui.components;
+```
+
+Anything the consumer writes sits outside those layers and therefore wins, regardless of
+specificity, with no `!important` needed on either side.
+
+The supported ways to change PontiUI's appearance, in order:
+
+1. Override a semantic token (`--pui-color-primary`). Covers the overwhelming majority.
+2. Pass `className` and style that class in the consumer's own stylesheet.
+3. Target `.pui-<component>` directly. Possible, unsupported, may break in a minor.
+
+Point 3 is why this decision exists. A readable class name invites consumers to style it,
+and once enough of them do, renaming an internal class becomes a breaking change by
+accident. Token names are public API and are versioned as such (Phase 13); class names
+are deliberately not, and that must be stated in the README rather than discovered.
+
+_Cost accepted:_ some consumers will target the classes regardless. Cascade layers give
+them a supported path that works at least as well, which is the strongest defense short
+of hashing the names - and D-19 rejected hashing.
+
+The cascade also arbitrates conflicts between the library's rules and the consumer's, so
+no runtime class-merging logic is needed to do it.
 
 ---
 
@@ -160,8 +285,8 @@ Presets are fast to adopt and opinionated in ways that may fight Prettier.
 
 ### D-18 - Browser support baseline `[open]` - blocks Phase 12 docs
 
-Tailwind v4 requires modern browsers (it relies on cascade layers, `@property` and
-`color-mix()`). The exact supported matrix needs to be stated in the README so
+The library relies on cascade layers, `@property` and `color-mix()`, all of which
+require reasonably modern browsers. The exact supported matrix needs to be stated in the README so
 consumers are not surprised. Also determines whether `oklch()` colors are acceptable in
 tokens without a fallback.
 

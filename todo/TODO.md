@@ -29,28 +29,38 @@ Completed before this plan was written.
 
 ## Phase 1 - Styling foundation and design tokens `[ ]`
 
-Goal: a working Tailwind v4 pipeline producing a namespaced stylesheet, and a token
-system that consumers can override without a rebuild.
+Goal: a CSS pipeline producing one namespaced stylesheet, and a token system consumers
+can override without a rebuild. Governed by D-19 through D-23.
 
-- [ ] Install `tailwindcss` and `@tailwindcss/cli` as dev dependencies
-- [ ] Install `clsx`, `tailwind-merge`, `class-variance-authority` as runtime dependencies
-- [ ] Create `src/styles/index.css` importing only the `theme` and `utilities` layers
-      (no Preflight - see `DECISIONS.md` D-04)
-- [ ] Apply the `pui` prefix so every emitted class is `pui:*`
-- [ ] Add `@source` so Tailwind scans `src/`
+- [ ] Install `lightningcss` as a dev dependency (D-21)
+- [ ] Install `clsx` as the only runtime dependency (merging the consumer's `className`)
 - [ ] Create `src/styles/tokens.css` with the two-tier token system:
-      primitives (`--color-brand-500`) feeding semantics (`--color-primary`)
+      primitives (`--pui-color-brand-500`) feeding semantics (`--pui-color-primary`)
 - [ ] Define the initial token set: colors, typography, spacing, radii, shadows,
       z-index, motion durations
-- [ ] Create `src/utils/cn.ts` using `extendTailwindMerge({ prefix: "pui" })`
-- [ ] Add `build:css` script and confirm `dist/styles.css` is generated
-- [ ] Install and configure `prettier-plugin-tailwindcss` with
-      `tailwindFunctions: ["cva", "cn"]`
-- [ ] Document every token in `docs/theming.md` (referenced by the root README)
+- [ ] Add the two scaling tokens from D-22: `--pui-font-size-base` and `--pui-space-unit`,
+      with spacing, radii and control heights derived from the latter
+- [ ] Declare the layer order once in `src/styles/index.css`:
+      `@layer pui.reset, pui.base, pui.components;` (D-23, ST-12)
+- [ ] Define the shared focus-ring declaration in `pui.base` (ST-10)
+- [ ] Create `src/utils/cn.ts` as a thin `clsx` wrapper for merging the consumer's
+      `className`; conflict resolution is the cascade's job (D-23)
+- [ ] Add the `build:css` script: Lightning CSS over `src/styles/index.css` plus every
+      `<Component>.css`, minified, emitted as `dist/styles.css`
+- [ ] Decide and document the concatenation order of component stylesheets, so the build
+      is deterministic and diffable
+- [ ] Install and configure Stylelint with the rule that enforces ST-4: no literal value
+      in a visual property outside `tokens.css`. **This is the mitigation D-19 accepted;
+      without it ST-4 is only an intention**
+- [ ] Add a `lint:css` script and wire Stylelint into `format`/CI
+- [ ] Document every token in `docs/theming.md`, including the relative root font-size
+      form from D-22 and the override contract from D-23
 
-**Exit criteria:** a scratch HTML file using `pui:` classes renders correctly from the
-built stylesheet, and overriding `--pui-color-primary` in a consumer stylesheet changes
-the output with no rebuild.
+**Exit criteria:** a scratch HTML file using `class="pui-button" data-pui-variant="primary"`
+renders correctly from the built stylesheet; overriding `--pui-color-primary` in a
+consumer stylesheet changes the output with no rebuild; an unlayered consumer rule
+overrides a library rule without `!important`; and Stylelint fails on a deliberately
+hardcoded `padding: 13px`.
 
 ---
 
@@ -65,11 +75,13 @@ packaging bugs surface now instead of at release time.
 - [ ] Verify the per-module output preserves `"use client"` directives
 - [ ] Add `react` and `react-dom` to `peerDependencies` (`>=18`)
 - [ ] Configure `package.json` for publishing: `files`, `exports` (root + `./styles.css` + `./package.json`), `main`, `module`, `types`, `sideEffects: ["**/*.css"]`
-- [ ] Add `build` script chaining `build:js` and `build:css`
-- [ ] Implement **Divider** as the pipeline canary (simplest possible component)
+- [ ] Add `build` script chaining `build:js` (tsdown) and `build:css` (Lightning CSS)
+- [ ] Implement **Divider** as the pipeline canary (simplest possible component),
+      including its `Divider.css` - it is also the canary for the CSS build
+- [ ] Confirm the built stylesheet contains no unlayered rule (ST-12)
 - [ ] Run `npm pack --dry-run` and audit the file list
 - [ ] Install the tarball into a throwaway Vite app and render the canary
-- [ ] Add `publishConfig.access` if a scoped name is chosen (see D-01)
+- [ ] Add `publishConfig.access` if a scoped name is chosen (see D-11)
 
 **Exit criteria:** `pnpm build` emits `dist/` and a separate project can install the
 tarball, import `pontiui/styles.css` and render `<Divider />` correctly.
@@ -84,8 +96,9 @@ tarball, import `pontiui/styles.css` and render `<Divider />` correctly.
 - [ ] Create `tsconfig.test.json` so test globals never leak into published types
 - [ ] Install `vitest-axe` for automated accessibility assertions
 - [ ] Add `test`, `test:watch`, `test:coverage` scripts
-- [ ] Install and configure ESLint (see D-07 for the config choice)
+- [ ] Install and configure ESLint (see D-17 for the config choice)
 - [ ] Add `eslint-plugin-jsx-a11y` and `eslint-plugin-react-hooks`
+- [ ] Add `lint:css` (Stylelint, from Phase 1) to CI alongside ESLint
 - [ ] Install `husky` + `lint-staged` for a pre-commit format and lint pass
 - [ ] Create the GitHub Actions CI workflow: install, typecheck, lint, test, build
 - [ ] Write the first tests against Divider to validate the setup
@@ -131,7 +144,7 @@ The reference implementation. Every later component copies its patterns.
 
 - [ ] Button (depends on Spinner for the loading state)
 - [ ] Confirm `"use client"` survives the build and works in a Next.js server component
-- [ ] Extract the shared focus-ring utility into the token layer if duplication appears
+- [ ] Confirm the shared focus-ring declaration from Phase 1 covers Button unchanged
 
 **Exit criteria:** Button is importable in a Next.js App Router page with no directive
 added by the consumer.
@@ -208,9 +221,10 @@ added by the consumer.
 
 Two separate throwaway projects, because they exercise different failure modes.
 
-- [ ] Vite + React app **without** Tailwind - proves the stylesheet is self-sufficient
-- [ ] Next.js App Router app **with** Tailwind - proves `"use client"`, SSR/hydration
-      and the absence of class collisions
+- [ ] Vite + React app with no CSS framework - proves the stylesheet is self-sufficient
+- [ ] Next.js App Router app **with** Tailwind - proves `"use client"`, SSR/hydration,
+      the absence of class collisions, and that the consumer's own utilities still win
+      over the library's layers (D-23)
 - [ ] Record both as a manual release checklist in `todo/`
 
 ---
