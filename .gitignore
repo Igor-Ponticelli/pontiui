@@ -24,3 +24,8 @@ Thumbs.db
 .turbo/
 .vite/
 *.tsbuildinfo
+
+# AI assistant local config
+CLAUDE.md
+.claude/
+EOF
