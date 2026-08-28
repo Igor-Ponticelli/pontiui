@@ -129,7 +129,7 @@ toggle visibly changes it.
 
 Zero-dependency components. Each one follows the full agent pipeline.
 
-- [x] Divider (delivered in Phase 2 as the canary - revisit against its full plan)
+- [ ] Divider (delivered in Phase 2 as the canary - revisit against its full plan)
 - [ ] Text
 - [ ] Spinner
 - [ ] Skeleton
@@ -153,7 +153,7 @@ added by the consumer.
 
 ## Phase 7 - Form controls `[ ]`
 
-- [ ] Resolve D-05 (does a control own its label and error text?) before starting
+- [ ] Resolve D-12 (does a control own its label and error text?) before starting
 - [ ] Input
 - [ ] Textarea
 - [ ] Verify both work with React Hook Form via forwarded refs
@@ -162,10 +162,10 @@ added by the consumer.
 
 ## Phase 8 - Overlay infrastructure and Modal `[ ]`
 
-- [ ] Resolve D-06 (native `<dialog>` versus custom portal implementation)
+- [ ] Resolve D-13 (native `<dialog>` versus custom portal implementation)
 - [ ] `useControllableState` hook
 - [ ] `useLockBodyScroll` hook
-- [ ] `useFocusTrap` hook (skip if D-06 resolves to native `<dialog>`)
+- [ ] `useFocusTrap` hook (skip if D-13 resolves to native `<dialog>`)
 - [ ] Portal utility with SSR-safe mounting
 - [ ] Modal
 - [ ] Verify no hydration mismatch in Next.js
@@ -174,7 +174,7 @@ added by the consumer.
 
 ## Phase 9 - Message (Toast) `[ ]`
 
-- [ ] Resolve D-08 (imperative API shape and whether a provider is mandatory)
+- [ ] Resolve D-14 (imperative API shape and whether a provider is mandatory)
 - [ ] Toast store and queue
 - [ ] `Toaster` render surface
 - [ ] Message component and public `toast` object
@@ -183,7 +183,7 @@ added by the consumer.
 
 ## Phase 10 - Navbar `[ ]`
 
-- [ ] Narrow the scope first: Navbar is the least defined component (see its plan)
+- [ ] Resolve D-16 (Navbar scope) first: it is the least defined component (see its plan)
 - [ ] Navbar with compound subcomponents
 - [ ] Mobile disclosure behavior
 
@@ -191,7 +191,7 @@ added by the consumer.
 
 ## Phase 11 - Carousel `[ ]`
 
-- [ ] Resolve D-09 (hand-rolled scroll-snap versus an external engine)
+- [ ] Resolve D-15 (hand-rolled scroll-snap versus an external engine)
 - [ ] Carousel
 
 ---
@@ -201,6 +201,7 @@ added by the consumer.
 - [ ] `ThemeProvider` (optional, never required to render a component)
 - [ ] Exported TypeScript type for the token map
 - [ ] Dark theme token values finalized
+- [ ] Resolve D-18 (browser support baseline) and state it in the README
 - [ ] `docs/theming.md` completed with the full token reference
 - [ ] Contrast audit of every semantic color pair against WCAG AA
 
