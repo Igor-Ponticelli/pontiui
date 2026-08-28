@@ -1,0 +1,88 @@
+@layer pui.reset {
+  .pui-divider {
+    box-sizing: border-box;
+    border: 0;
+  }
+}
+
+@layer pui.components {
+  /*
+   * Without a label the element *is* the rule, drawn as a background rather
+   * than a border so thickness and colour are controlled by one pair of tokens
+   * on either axis.
+   */
+  .pui-divider {
+    background-color: var(--pui-color-border);
+  }
+
+  .pui-divider[data-pui-orientation="horizontal"] {
+    width: 100%;
+    height: var(--pui-border-width);
+  }
+
+  .pui-divider[data-pui-orientation="vertical"] {
+    align-self: stretch;
+    width: var(--pui-border-width);
+    height: 100%;
+  }
+
+  /* Spacing runs along the main axis only, so a divider never shifts the
+     content it sits between sideways. */
+  .pui-divider[data-pui-orientation="horizontal"][data-pui-spacing="none"] {
+    margin-block: 0;
+  }
+
+  .pui-divider[data-pui-orientation="horizontal"][data-pui-spacing="sm"] {
+    margin-block: var(--pui-space-2);
+  }
+
+  .pui-divider[data-pui-orientation="horizontal"][data-pui-spacing="md"] {
+    margin-block: var(--pui-space-4);
+  }
+
+  .pui-divider[data-pui-orientation="horizontal"][data-pui-spacing="lg"] {
+    margin-block: var(--pui-space-6);
+  }
+
+  .pui-divider[data-pui-orientation="vertical"][data-pui-spacing="none"] {
+    margin-inline: 0;
+  }
+
+  .pui-divider[data-pui-orientation="vertical"][data-pui-spacing="sm"] {
+    margin-inline: var(--pui-space-2);
+  }
+
+  .pui-divider[data-pui-orientation="vertical"][data-pui-spacing="md"] {
+    margin-inline: var(--pui-space-4);
+  }
+
+  .pui-divider[data-pui-orientation="vertical"][data-pui-spacing="lg"] {
+    margin-inline: var(--pui-space-6);
+  }
+
+  /*
+   * With a label the element becomes a three-part row and stops being the rule
+   * itself, so its own background is cleared and the two halves draw it.
+   */
+  .pui-divider[data-pui-labelled="true"] {
+    display: flex;
+    align-items: center;
+    gap: var(--pui-space-3);
+    width: 100%;
+    height: auto;
+    background-color: transparent;
+  }
+
+  .pui-divider-line {
+    flex: 1 1 0;
+    height: var(--pui-border-width);
+    background-color: var(--pui-color-border);
+  }
+
+  .pui-divider-label {
+    color: var(--pui-color-muted-foreground);
+    font-size: var(--pui-font-size-sm);
+    line-height: var(--pui-line-height-normal);
+    white-space: nowrap;
+  }
+}
