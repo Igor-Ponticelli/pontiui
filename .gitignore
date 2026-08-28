@@ -1,0 +1,26 @@
+# dependências
+node_modules/
+
+# artefatos de build
+dist/
+storybook-static/
+*.tgz
+
+# testes
+coverage/
+
+# ambiente
+.env
+.env.*
+!.env.example
+
+# editores e SO
+.DS_Store
+Thumbs.db
+.idea/
+*.log
+
+# caches
+.turbo/
+.vite/
+*.tsbuildinfo

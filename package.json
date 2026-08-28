@@ -1,0 +1,23 @@
+{
+  "name": "pontiui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Accessible React component library with CSS-variable theming.",
+  "license": "MIT",
+  "author": "Igor Patrick Ponticelli <patrickigor.ip@gmail.com>",
+  "type": "module",
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "design-system",
+    "tailwind"
+  ],
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "typecheck": "echo \"(ainda não configurado)\""
+  }
+}
