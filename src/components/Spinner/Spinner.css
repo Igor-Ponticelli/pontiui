@@ -101,7 +101,7 @@
   @media (prefers-reduced-motion: reduce) {
     .pui-spinner-icon {
       animation-name: pui-spinner-pulse;
-      animation-duration: var(--pui-duration-slow);
+      animation-duration: var(--pui-duration-pulse);
       animation-timing-function: var(--pui-easing-standard);
       animation-direction: alternate;
     }
