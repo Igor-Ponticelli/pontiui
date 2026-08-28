@@ -7,7 +7,7 @@
       "/^color$|^background$|^background-color$|^border.*-?color$|^outline-color$|^fill$|^stroke$/": [
         "/^var\\(--pui-/",
         "transparent",
-        "currentColor",
+        "currentcolor",
         "inherit",
         "none"
       ],
