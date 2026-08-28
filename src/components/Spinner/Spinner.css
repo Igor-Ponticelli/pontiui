@@ -1,0 +1,119 @@
+@layer pui.reset {
+  .pui-spinner {
+    box-sizing: border-box;
+  }
+}
+
+@layer pui.components {
+  /*
+   * inline-flex with a zero line-height so the spinner never grows the line
+   * box it sits in - dropping a spinner into a button must not change the
+   * button's height.
+   */
+  .pui-spinner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: var(--pui-line-height-none);
+    vertical-align: middle;
+  }
+
+  /* Sized in em, so the step is relative to the surrounding text rather than
+     an absolute pixel value that would look wrong at another type size. */
+  .pui-spinner[data-pui-size="sm"] {
+    --pui-spinner-diameter: 1em;
+  }
+
+  .pui-spinner[data-pui-size="md"] {
+    --pui-spinner-diameter: 1.25em;
+  }
+
+  .pui-spinner[data-pui-size="lg"] {
+    --pui-spinner-diameter: 1.5em;
+  }
+
+  .pui-spinner[data-pui-tone="current"] {
+    color: inherit;
+  }
+
+  .pui-spinner[data-pui-tone="primary"] {
+    color: var(--pui-color-primary);
+  }
+
+  .pui-spinner[data-pui-tone="muted"] {
+    color: var(--pui-color-muted-foreground);
+  }
+
+  .pui-spinner-icon {
+    width: var(--pui-spinner-diameter);
+    height: var(--pui-spinner-diameter);
+
+    /*
+     * Longhand rather than the `animation` shorthand on purpose: the shorthand
+     * hides its duration and timing function from the Stylelint rule that
+     * enforces ST-4, so a hardcoded `700ms linear` would slip through it.
+     */
+    animation-name: pui-spinner-spin;
+    animation-duration: var(--pui-duration-spin);
+    animation-timing-function: var(--pui-easing-linear);
+    animation-iteration-count: infinite;
+  }
+
+  /* currentColor on both rings is what makes tone="current" work anywhere.
+     The track is the same colour at low opacity rather than a second token,
+     so it stays legible on any background. */
+  .pui-spinner-track {
+    stroke: currentcolor;
+    opacity: 0.2;
+  }
+
+  .pui-spinner-head {
+    stroke: currentcolor;
+  }
+
+  /* Visually hidden, still announced. No negative margin or clip hacks: an
+     inset clip-path on a 1px box is enough on every engine the library
+     targets. */
+  .pui-spinner-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @keyframes pui-spinner-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /*
+   * Reduced motion: pulse, do not stop (ST-9).
+   *
+   * Stopping would leave a static ring, removing the only signal the component
+   * exists to give - the user would not know anything was still happening. An
+   * opacity fade carries the same information without the rotation that causes
+   * vestibular discomfort. Skeleton follows the same rule, so the two read as
+   * one system (X-2).
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .pui-spinner-icon {
+      animation-name: pui-spinner-pulse;
+      animation-duration: var(--pui-duration-slow);
+      animation-timing-function: var(--pui-easing-standard);
+      animation-direction: alternate;
+    }
+  }
+
+  @keyframes pui-spinner-pulse {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0.35;
+    }
+  }
+}
