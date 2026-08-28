@@ -91,6 +91,11 @@ responsibility prominently.
 - Should a `Skeleton.Group` exist that sets `aria-busy` automatically, or is that
   scope creep for 0.1.0?
 - Pulse or shimmer as the default animation?
+- **Already settled by Spinner:** under `prefers-reduced-motion: reduce` the animation
+  becomes an opacity pulse rather than stopping, whichever of pulse or shimmer is chosen
+  for the default. X-2 requires the two loading components to behave identically here.
+- **Already settled by Divider and Spinner:** the prop that controls whether the element
+  reaches assistive technology is named `decorative` (X-1).
 
 ## Definition of done
 

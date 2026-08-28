@@ -161,8 +161,10 @@ Zero-dependency components. Each one follows the full agent pipeline.
 
 - [~] Divider (implemented in Phase 2 as the canary; needs tests, a11y sign-off and
   stories to be complete against its full plan)
-- [ ] Text
-- [ ] Spinner
+- [?] Text - blocked on the `as` prop typing question in its plan. Not a small call:
+  it decides whether the library ships one polymorphic component or a separate
+  `Heading`, and it is a breaking change to revisit
+- [~] Spinner (implemented; needs tests, a11y sign-off and stories)
 - [ ] Skeleton
 
 **Exit criteria:** all four have plan, implementation, tests, a11y sign-off and stories.

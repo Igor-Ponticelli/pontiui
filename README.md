@@ -106,7 +106,7 @@ See [Theming](./docs/theming.md) for the full token reference.
 | Textarea  | planned |
 | Text      | planned |
 | Divider   | alpha   |
-| Spinner   | planned |
+| Spinner   | alpha   |
 | Skeleton  | planned |
 | Modal     | planned |
 | Toast     | planned |

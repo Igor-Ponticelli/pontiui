@@ -232,7 +232,12 @@ D-22 (scaling axes) and D-23 (cascade layers). Read those before arguing with a 
 ## Cross-component consistency (X)
 
 - **X-1** The same concept uses the same prop name everywhere. Check two existing
-  components before naming a new prop.
+  components before naming a new prop. Established so far:
+  - `decorative` - whether the element reaches assistive technology. Defaults differ by
+    component; the meaning does not.
+  - `size` - `sm | md | lg`, defaulting to `md` (N-6).
+  - `tone` - which semantic colour role the element takes.
+  - `label` - an accessible name supplied as a plain string.
 - **X-2** Identical states look identical across components: disabled, loading, invalid
   and focused must be visually consistent.
 - **X-3** Shared behavior uses the shared hook. Do not write a second focus trap.
