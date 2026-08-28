@@ -243,7 +243,8 @@ added by the consumer.
 ## Phase 13 - Versioning and release `[ ]`
 
 - [ ] Install and initialize Changesets
-- [ ] Document the semver policy, including that **token names are public API**
+- [ ] Document the semver policy (D-24), including that **token names are public API**
+- [ ] Confirm changesets start applying from this publish onward (D-24, COMMITS rule 7)
 - [ ] Remove `"private": true` from `package.json`
 - [ ] Add the release GitHub Actions workflow using `changesets/action`
 - [ ] Configure npm trusted publishing / `--provenance`

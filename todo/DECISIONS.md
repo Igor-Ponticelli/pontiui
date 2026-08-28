@@ -214,6 +214,38 @@ second bare name, and the backlog already contemplates a separate icon package.
 _Prerequisite for Phase 13:_ the `igor_ponti` npm account or organisation must exist and
 be owned by the publisher. Publishing into a scope you do not own fails at the registry.
 
+### D-24 - Versioning policy: `0.1.0` first, changesets from the first publish `[decided]`
+
+The first public release is `0.1.0`, not `1.0.0`. Changesets are written from that
+publish onward, not before it.
+
+**Why `0.x` first.** `1.0.0` is a public promise with a defined meaning: the API is
+stable, and every break from here costs a major. Making that promise about eleven
+components that no one - including their author - has yet used in a real project is
+writing a cheque against evidence that does not exist.
+
+Phase 2 already showed the shape of what `0.x` is for. Divider had a written plan, was
+implemented against that plan, and still hid its own label from assistive technology. It
+was caught by rendering the markup and reading it. The category that plan review does not
+catch is the API that reads well on paper and feels wrong in use - the `as` prop on Text
+and the shape of the Toast API are the obvious candidates. Under `0.x` those cost a minor
+and a changelog line. Under `1.x` each one is a major, and three majors in two months
+tell consumers the library is unstable even when the opposite is true.
+
+`0.x` is exactly the window between "I think the API is right" and "I know it is,
+because I have used it".
+
+**Route to `1.0.0`:** publish `0.1.0`; consume it in at least one real project; whatever
+hurts becomes `0.2.0`, `0.3.0`; `1.0.0` when a full cycle passes with nothing worth
+changing.
+
+_Consistent with:_ the README already states that APIs change without notice until
+`1.0.0`. Publishing `1.0.0` first would contradict a promise already in writing.
+
+**Why changesets start at the first publish.** See the reasoning in
+`COMMITS.md` rule 7. In short: before `0.1.0` exists there is nothing to bump from, so a
+changeset has no question to answer.
+
 ---
 
 ## Open
