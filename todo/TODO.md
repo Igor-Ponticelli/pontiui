@@ -66,7 +66,10 @@ can override without a rebuild. Governed by D-19 through D-23.
   rebuild
 - an unlayered consumer rule overrides a library rule from `@layer pui.base` at lower
   specificity and without `!important`
-- `--pui-space-unit` and `--pui-font-size-base` scale density and type independently
+- `--pui-space-unit` and `--pui-font-size-base`, **set at `:root`**, scale density and
+  type independently. Phase 3 corrected this line: it originally claimed subtree
+  overrides had been verified on the scratch page, and they had not - they do not work
+  for these two knobs (D-22)
 - `pnpm lint:css` fails on `padding: 13px`, `color: #7c3aed`, `border-radius: 6px` and
   `font-size: 14px`, and passes on the token equivalents
 
@@ -118,22 +121,45 @@ plan.
 
 ---
 
-## Phase 3 - Testing and lint tooling `[ ]`
+## Phase 3 - Testing and lint tooling `[x]`
 
-- [ ] Install `vitest`, `@vitest/browser` or `jsdom`, `@testing-library/react`,
-      `@testing-library/user-event`, `@testing-library/jest-dom`
-- [ ] Create `vitest.config.ts` and a test setup file
-- [ ] Create `tsconfig.test.json` so test globals never leak into published types
-- [ ] Install `vitest-axe` for automated accessibility assertions
-- [ ] Add `test`, `test:watch`, `test:coverage` scripts
-- [ ] Install and configure ESLint (see D-17 for the config choice)
-- [ ] Add `eslint-plugin-jsx-a11y` and `eslint-plugin-react-hooks`
-- [ ] Add `lint:css` (Stylelint, from Phase 1) to CI alongside ESLint
-- [ ] Install `husky` + `lint-staged` for a pre-commit format and lint pass
-- [ ] Create the GitHub Actions CI workflow: install, typecheck, lint, test, build
-- [ ] Write the first tests against Divider to validate the setup
+- [x] Install `vitest`, `@vitest/browser` + `@vitest/browser-playwright`, `playwright`,
+      `@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`
+- [x] Create `vitest.config.ts` and a test setup file. **Tests run in real Chromium, not
+      jsdom**, so assertions can read computed styles: a test proves a token resolved
+      rather than that a class name was written
+- [x] Create `tsconfig.test.json` so test globals never leak into published types
+- [x] Accessibility assertions via `axe-core` and a small typed helper in `test/axe.ts`.
+      `vitest-axe` was dropped: it loads through `createRequire` and cannot run in browser
+      mode, which is precisely where axe belongs, since colour contrast needs real
+      rendering to evaluate
+- [x] Add `test`, `test:watch`, `test:coverage` scripts
+- [x] Install and configure ESLint (D-17: flat config, `typescript-eslint` directly)
+- [x] Add `eslint-plugin-jsx-a11y` and `eslint-plugin-react-hooks`
+- [x] Add `lint:css` (Stylelint, from Phase 1) to CI alongside ESLint
+- [x] Install `husky` + `lint-staged` for a pre-commit format and lint pass
+- [x] Create the GitHub Actions CI workflow: install, typecheck, lint, test, build
+- [x] Write the first tests against Divider to validate the setup
+- [x] Also covered Spinner and Text, so no implemented component is left untested
 
-**Exit criteria:** CI is green on a pull request and fails on a deliberately broken test.
+**Exit criteria, partly verified.** The full CI sequence passes locally - typecheck,
+lint, lint:css, format:check, test, build - and both failure modes were confirmed
+deliberately: a wrong computed-style assertion fails the suite, and a type error in a
+test file fails `typecheck` and `lint`.
+
+**CI has not yet run on GitHub.** Pushing is the session owner's job, so the workflow is
+committed but unproven on the runner. The one step that cannot be rehearsed locally is
+`playwright install --with-deps chromium`, which needs the runner's system libraries.
+
+39 tests across three components. Two findings came out of writing them, both recorded:
+
+- `role="status"` takes its name from the author, not from its contents, so a live
+  region named only by `aria-label` and holding no text announces nothing. The Spinner's
+  hidden label is the mechanism, not a decoration. The plan said "accessible name" where
+  it meant "announced content"; corrected.
+- The two D-22 scale knobs only take effect at `:root`. This contradicted a Phase 1 exit
+  criterion that had claimed subtree overrides were verified. Corrected above, documented
+  in `docs/theming.md`, and pinned by a test.
 
 ---
 

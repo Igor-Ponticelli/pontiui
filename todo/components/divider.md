@@ -1,7 +1,8 @@
 # Divider
 
-**Status:** `[x]` implemented (Phase 2 canary). Tests, a11y sign-off and
-stories still pending - Phases 3, 4 and 5.
+**Status:** `[x]` implemented (Phase 2 canary). Tested (Phase 3), including a
+regression test for the label defect. Stories and the formal a11y sign-off still
+pending - Phases 4 and 5.
 **Phase:** 2 (pipeline canary), reviewed again in Phase 5
 **Depends on:** nothing
 **Blocked by:** nothing

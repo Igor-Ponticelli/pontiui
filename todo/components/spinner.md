@@ -1,7 +1,7 @@
 # Spinner
 
-**Status:** `[x]` implemented. Tests, a11y sign-off and stories still pending -
-Phases 3, 4 and 5.
+**Status:** `[x]` implemented. Tested (Phase 3). Stories and the formal a11y
+sign-off still pending - Phases 4 and 5.
 **Phase:** 5
 **Depends on:** motion tokens
 **Blocked by:** nothing

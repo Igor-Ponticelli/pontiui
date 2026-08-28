@@ -101,7 +101,7 @@ control, or tighten controls without shrinking text.
 
 | Token                  | Controls                                           |
 | ---------------------- | -------------------------------------------------- |
-| `--pui-font-size-base` | The whole type scale (`xs` … `3xl` derive from it) |
+| `--pui-font-size-base` | The whole type scale (`xs` … `7xl` derive from it) |
 | `--pui-space-unit`     | Spacing, radii and control heights                 |
 
 ```css
@@ -109,6 +109,38 @@ control, or tighten controls without shrinking text.
   --pui-space-unit: 0.3rem; /* roomier controls, type untouched */
 }
 ```
+
+### These two only work at the root
+
+Both knobs take effect at `:root` and nowhere else. Setting either on a wrapper element
+silently does nothing:
+
+```css
+:root {
+  --pui-font-size-base: 1.125rem; /* works */
+}
+
+.my-card {
+  --pui-font-size-base: 1.125rem; /* does nothing */
+}
+```
+
+The reason is how CSS resolves custom properties. `--pui-font-size-lg` is declared as a
+calculation over `--pui-font-size-base`, and that substitution happens where the property
+is _declared_, which is `:root`. Redefining the input further down the tree cannot
+re-derive a value that has already been resolved.
+
+Nothing else behaves this way. Semantic tokens and the individual scale steps are read
+directly by components, so overriding them on any ancestor works as you would expect:
+
+```css
+.my-card {
+  --pui-color-primary: #0ea5e9; /* works */
+  --pui-font-size-md: 1.25rem; /* works */
+}
+```
+
+In short: change the two knobs globally, override individual tokens locally.
 
 ### Scaling type with the root font size
 

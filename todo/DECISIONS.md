@@ -173,6 +173,13 @@ being left for them to work out.
 
 _Cost accepted:_ two knobs to explain instead of one.
 
+_Cost accepted, found during Phase 3:_ both knobs only take effect at `:root`. A custom
+property that references another is substituted where it is declared, so redefining
+`--pui-font-size-base` on a subtree cannot re-derive steps already resolved at `:root`.
+Overriding an individual step such as `--pui-font-size-md` on a subtree does work, and so
+does any semantic token, because components read those directly. Documented in
+`docs/theming.md` and pinned by a test rather than left to be rediscovered.
+
 ### D-23 - Override contract: cascade layers `[decided]`
 
 All library CSS is emitted inside cascade layers:
@@ -268,6 +275,42 @@ repeatedly by consumers.
 _Consequence:_ `as` is the only way to get an element `Text` does not list. Adding a
 member later is additive and therefore a minor (E-5); removing one is a major.
 
+### D-17 - ESLint: flat config with typescript-eslint directly `[decided]`
+
+`eslint.config.js` is written out by hand: `js.configs.recommended`,
+`tseslint.configs.recommendedTypeChecked`, `eslint-plugin-jsx-a11y` and
+`eslint-plugin-react-hooks`, plus the rules that enforce specific guidelines - `TS-1`
+(`no-explicit-any`), `TS-2` (`ban-ts-comment`), `TS-5` (`consistent-type-imports`) and
+`E-3` (a `no-restricted-syntax` rule banning default exports).
+
+_Rejected:_ a preset such as `@antfu/eslint-config`. It is faster to adopt, but it hides
+the rules the project actually depends on, which works against the reason this repository
+exists. It also bundles ESLint Stylistic, which replaces Prettier - already configured
+since Phase 0 - so half the preset would have to be switched off anyway.
+
+_Cost accepted:_ more configuration to write once, and to maintain as plugins change.
+
+### D-26 - TypeScript 6, not 7 `[decided]`
+
+The project pins `typescript@6.0.3`.
+
+TypeScript 7 arrived with the initial scaffold rather than by decision, and it blocks
+`typescript-eslint`, whose peer range is `>=4.8.4 <6.1.0`. The failure is at import time,
+so no subset of rules survives it.
+
+_Rejected:_ keeping 7 and running ESLint without type-aware rules. That removes exactly
+the rules that enforce TS-1, TS-2 and TS-5, turning three binding guidelines back into
+intentions.
+
+_Rejected:_ keeping 7 for the build and installing 6 alongside for the linter. The lint
+would then analyse with a different compiler from the one generating the published types.
+In a library whose product is its types, that is a source of silent divergence.
+
+_Cost accepted:_ the compile-speed gain of the native port. `tsc --noEmit` runs in under
+a second across this codebase, so the trade buys nothing that matters at this size.
+
+_Revisit when:_ `typescript-eslint` ships TS 7 support (their issue #10940).
+
 ---
 
 ## Open
@@ -333,13 +376,6 @@ behavior, whether it handles the mobile drawer, whether it does anything about r
 and the active link. See `components/navbar.md`.
 
 **Decide before:** starting Navbar.
-
-### D-17 - ESLint configuration `[open]` - blocks Phase 3
-
-Flat config with `typescript-eslint` directly, or a preset such as `@antfu/eslint-config`?
-Presets are fast to adopt and opinionated in ways that may fight Prettier.
-
-**Decide before:** installing ESLint.
 
 ### D-18 - Browser support baseline `[open]` - blocks Phase 12 docs
 
