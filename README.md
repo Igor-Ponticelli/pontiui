@@ -64,26 +64,26 @@ Every visual value is a CSS custom property. Override the ones you need in your 
 Dark mode is opt-in through a data attribute on any ancestor element:
 
 ```html
-<body data-pui-theme="dark">
+<body data-pui-theme="dark"></body>
 ```
 
 See [Theming](./docs/theming.md) for the full token reference.
 
 ## Components
 
-| Component | Status |
-| --- | --- |
-| Button | planned |
-| Input | planned |
-| Textarea | planned |
-| Text | planned |
-| Divider | planned |
-| Spinner | planned |
-| Skeleton | planned |
-| Modal | planned |
-| Toast | planned |
-| Navbar | planned |
-| Carousel | planned |
+| Component | Status  |
+| --------- | ------- |
+| Button    | planned |
+| Input     | planned |
+| Textarea  | planned |
+| Text      | planned |
+| Divider   | planned |
+| Spinner   | planned |
+| Skeleton  | planned |
+| Modal     | planned |
+| Toast     | planned |
+| Navbar    | planned |
+| Carousel  | planned |
 
 ## Development
 
