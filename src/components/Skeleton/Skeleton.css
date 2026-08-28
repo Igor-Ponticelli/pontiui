@@ -1,0 +1,113 @@
+@layer pui.reset {
+  .pui-skeleton {
+    box-sizing: border-box;
+  }
+}
+
+@layer pui.components {
+  .pui-skeleton {
+    display: block;
+    background-color: var(--pui-color-skeleton);
+    border-radius: var(--pui-radius-md);
+  }
+
+  /* Height comes from the surrounding font size, so a text placeholder lines
+     up with the real text it stands in for without being measured. */
+  .pui-skeleton[data-pui-variant="text"] {
+    width: 100%;
+    height: 1em;
+    border-radius: var(--pui-radius-sm);
+  }
+
+  .pui-skeleton[data-pui-variant="circle"] {
+    width: var(--pui-space-10);
+    aspect-ratio: 1;
+    border-radius: var(--pui-radius-full);
+  }
+
+  .pui-skeleton[data-pui-variant="rect"] {
+    width: 100%;
+    height: var(--pui-space-16);
+    border-radius: var(--pui-radius-md);
+  }
+
+  .pui-skeleton[data-pui-radius="sm"] {
+    border-radius: var(--pui-radius-sm);
+  }
+
+  .pui-skeleton[data-pui-radius="md"] {
+    border-radius: var(--pui-radius-md);
+  }
+
+  .pui-skeleton[data-pui-radius="lg"] {
+    border-radius: var(--pui-radius-lg);
+  }
+
+  .pui-skeleton[data-pui-radius="full"] {
+    border-radius: var(--pui-radius-full);
+  }
+
+  /*
+   * Stacked lines: the element stops being the bar and becomes the column that
+   * holds them, so its own background is cleared.
+   */
+  .pui-skeleton[data-pui-stacked="true"] {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pui-space-2);
+    height: auto;
+    background-color: transparent;
+  }
+
+  .pui-skeleton-line {
+    height: 1em;
+    background-color: var(--pui-color-skeleton);
+    border-radius: var(--pui-radius-sm);
+  }
+
+  /* The short last line is what makes a stack read as a paragraph rather than
+     as a table. */
+  .pui-skeleton-line:last-child {
+    width: 60%;
+  }
+
+  /*
+   * Opacity, not a moving gradient: opacity animates on the compositor, while
+   * a shimmer animates background-position and repaints. On a page showing
+   * twenty placeholders that difference is the whole cost.
+   */
+  .pui-skeleton[data-pui-animation="pulse"],
+  .pui-skeleton[data-pui-animation="pulse"] .pui-skeleton-line {
+    animation-name: pui-skeleton-pulse;
+    animation-duration: var(--pui-duration-pulse);
+    animation-timing-function: var(--pui-easing-standard);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+
+  @keyframes pui-skeleton-pulse {
+    from {
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0.55;
+    }
+  }
+
+  /*
+   * Reduced motion stops the animation outright, where Spinner instead keeps a
+   * pulse (ST-9).
+   *
+   * The two differ for a reason rather than by accident. A spinner that stops
+   * has lost the only thing it communicates. A skeleton that stops has lost
+   * nothing: the shape is the message, and the shape is still there. The rule
+   * is that motion is removed unless the motion is itself the information.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .pui-skeleton,
+    .pui-skeleton .pui-skeleton-line {
+      animation-name: none;
+    }
+  }
+}
