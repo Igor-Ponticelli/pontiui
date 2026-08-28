@@ -1,0 +1,24 @@
+/**
+ * Library-wide base rules.
+ *
+ * Only what genuinely cannot live in a single component belongs here. Component
+ * resets go in each component's own file, scoped to its own class (ST-8).
+ */
+
+@layer pui.base {
+  /*
+   * The shared focus ring (ST-10). Declared once against the pui- namespace
+   * rather than repeated in every component, so the ring is provably identical
+   * everywhere and can be restyled from one place.
+   *
+   * :where() keeps specificity at zero, so any component rule overrides it
+   * without a specificity fight, and so does anything the consumer writes.
+   *
+   * :focus-visible, never :focus - the ring appears on keyboard focus and not
+   * on a mouse click.
+   */
+  :where([class^="pui-"], [class*=" pui-"]):focus-visible {
+    outline: var(--pui-focus-ring-width) solid var(--pui-color-ring);
+    outline-offset: var(--pui-focus-ring-offset);
+  }
+}

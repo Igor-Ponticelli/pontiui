@@ -1,0 +1,213 @@
+/**
+ * Design tokens.
+ *
+ * Two tiers (D-03):
+ *   Primitives  --pui-<category>-<name>-<step>   raw scale values, never used by a component
+ *   Semantics   --pui-<category>-<role>          the only tier a component may reference
+ *
+ * Rebranding means redefining semantics, not primitives.
+ * Token names are public API and are versioned as such (M-4).
+ */
+
+@layer pui.tokens {
+  :root {
+    /* ---------------------------------------------------------------- *
+     * Primitives - colour
+     * ---------------------------------------------------------------- */
+
+    --pui-color-violet-50: #f5f3ff;
+    --pui-color-violet-100: #ede9fe;
+    --pui-color-violet-200: #ddd6fe;
+    --pui-color-violet-300: #c4b5fd;
+    --pui-color-violet-400: #a78bfa;
+    --pui-color-violet-500: #8b5cf6;
+    --pui-color-violet-600: #7c3aed;
+    --pui-color-violet-700: #6d28d9;
+    --pui-color-violet-800: #5b21b6;
+    --pui-color-violet-900: #4c1d95;
+    --pui-color-violet-950: #2e1065;
+    --pui-color-neutral-0: #fff;
+    --pui-color-neutral-50: #f8fafc;
+    --pui-color-neutral-100: #f1f5f9;
+    --pui-color-neutral-200: #e2e8f0;
+    --pui-color-neutral-300: #cbd5e1;
+    --pui-color-neutral-400: #94a3b8;
+    --pui-color-neutral-500: #64748b;
+    --pui-color-neutral-600: #475569;
+    --pui-color-neutral-700: #334155;
+    --pui-color-neutral-800: #1e293b;
+    --pui-color-neutral-900: #0f172a;
+    --pui-color-neutral-950: #020617;
+    --pui-color-red-500: #ef4444;
+    --pui-color-red-600: #dc2626;
+    --pui-color-red-700: #b91c1c;
+    --pui-color-green-600: #16a34a;
+    --pui-color-green-700: #15803d;
+    --pui-color-amber-500: #f59e0b;
+    --pui-color-amber-600: #d97706;
+    --pui-color-blue-600: #2563eb;
+    --pui-color-blue-700: #1d4ed8;
+
+    /* ---------------------------------------------------------------- *
+     * Primitives - scale roots (D-22)
+     *
+     * The two knobs a consumer turns to rescale the library. Type follows
+     * the root font size; density has its own unit so enlarging text does
+     * not inflate every control.
+     * ---------------------------------------------------------------- */
+
+    --pui-font-size-base: 1rem;
+    --pui-space-unit: 0.25rem;
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - colour (light)
+     * ---------------------------------------------------------------- */
+
+    --pui-color-background: var(--pui-color-neutral-0);
+    --pui-color-foreground: var(--pui-color-neutral-900);
+    --pui-color-surface: var(--pui-color-neutral-50);
+    --pui-color-surface-foreground: var(--pui-color-neutral-900);
+    --pui-color-muted: var(--pui-color-neutral-100);
+    --pui-color-muted-foreground: var(--pui-color-neutral-500);
+    --pui-color-primary: var(--pui-color-violet-600);
+    --pui-color-primary-hover: var(--pui-color-violet-700);
+    --pui-color-primary-active: var(--pui-color-violet-800);
+    --pui-color-primary-foreground: var(--pui-color-neutral-0);
+    --pui-color-secondary: var(--pui-color-neutral-100);
+    --pui-color-secondary-hover: var(--pui-color-neutral-200);
+    --pui-color-secondary-active: var(--pui-color-neutral-300);
+    --pui-color-secondary-foreground: var(--pui-color-neutral-900);
+    --pui-color-danger: var(--pui-color-red-600);
+    --pui-color-danger-hover: var(--pui-color-red-700);
+    --pui-color-danger-foreground: var(--pui-color-neutral-0);
+    --pui-color-success: var(--pui-color-green-600);
+    --pui-color-success-foreground: var(--pui-color-neutral-0);
+    --pui-color-warning: var(--pui-color-amber-500);
+    --pui-color-warning-foreground: var(--pui-color-neutral-950);
+    --pui-color-info: var(--pui-color-blue-600);
+    --pui-color-info-foreground: var(--pui-color-neutral-0);
+    --pui-color-border: var(--pui-color-neutral-200);
+    --pui-color-border-strong: var(--pui-color-neutral-300);
+    --pui-color-ring: var(--pui-color-violet-600);
+    --pui-color-overlay: rgb(2 6 23 / 50%);
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - typography
+     * ---------------------------------------------------------------- */
+
+    --pui-font-sans:
+      ui-sans-serif, system-ui, -apple-system, "Segoe UI", roboto, "Helvetica Neue", arial,
+      sans-serif;
+    --pui-font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", menlo, monospace;
+    --pui-font-size-xs: calc(var(--pui-font-size-base) * 0.75);
+    --pui-font-size-sm: calc(var(--pui-font-size-base) * 0.875);
+    --pui-font-size-md: var(--pui-font-size-base);
+    --pui-font-size-lg: calc(var(--pui-font-size-base) * 1.125);
+    --pui-font-size-xl: calc(var(--pui-font-size-base) * 1.25);
+    --pui-font-size-2xl: calc(var(--pui-font-size-base) * 1.5);
+    --pui-font-size-3xl: calc(var(--pui-font-size-base) * 1.875);
+    --pui-font-weight-normal: 400;
+    --pui-font-weight-medium: 500;
+    --pui-font-weight-semibold: 600;
+    --pui-font-weight-bold: 700;
+    --pui-line-height-tight: 1.25;
+    --pui-line-height-normal: 1.5;
+    --pui-line-height-relaxed: 1.75;
+    --pui-letter-spacing-tight: -0.01em;
+    --pui-letter-spacing-normal: 0em;
+    --pui-letter-spacing-wide: 0.025em;
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - spacing, derived from the density unit
+     * ---------------------------------------------------------------- */
+
+    --pui-space-0: 0;
+    --pui-space-1: calc(var(--pui-space-unit) * 1);
+    --pui-space-2: calc(var(--pui-space-unit) * 2);
+    --pui-space-3: calc(var(--pui-space-unit) * 3);
+    --pui-space-4: calc(var(--pui-space-unit) * 4);
+    --pui-space-5: calc(var(--pui-space-unit) * 5);
+    --pui-space-6: calc(var(--pui-space-unit) * 6);
+    --pui-space-8: calc(var(--pui-space-unit) * 8);
+    --pui-space-10: calc(var(--pui-space-unit) * 10);
+    --pui-space-12: calc(var(--pui-space-unit) * 12);
+    --pui-space-16: calc(var(--pui-space-unit) * 16);
+
+    /* Control heights. Button, Input and Textarea must line up at the same
+       size step, so the value lives here rather than in each component. */
+    --pui-control-height-sm: calc(var(--pui-space-unit) * 8);
+    --pui-control-height-md: calc(var(--pui-space-unit) * 10);
+    --pui-control-height-lg: calc(var(--pui-space-unit) * 12);
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - radii, borders, shadows
+     * ---------------------------------------------------------------- */
+
+    --pui-radius-none: 0;
+    --pui-radius-sm: calc(var(--pui-space-unit) * 0.5);
+    --pui-radius-md: calc(var(--pui-space-unit) * 1.5);
+    --pui-radius-lg: calc(var(--pui-space-unit) * 2);
+    --pui-radius-xl: calc(var(--pui-space-unit) * 3);
+    --pui-radius-full: 9999px;
+    --pui-border-width: 1px;
+    --pui-border-width-strong: 2px;
+    --pui-shadow-sm: 0 1px 2px 0 rgb(2 6 23 / 5%);
+    --pui-shadow-md: 0 4px 6px -1px rgb(2 6 23 / 10%), 0 2px 4px -2px rgb(2 6 23 / 10%);
+    --pui-shadow-lg: 0 10px 15px -3px rgb(2 6 23 / 10%), 0 4px 6px -4px rgb(2 6 23 / 10%);
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - focus ring (ST-10)
+     * ---------------------------------------------------------------- */
+
+    --pui-focus-ring-width: 2px;
+    --pui-focus-ring-offset: 2px;
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - z-index
+     * ---------------------------------------------------------------- */
+
+    --pui-z-base: 0;
+    --pui-z-dropdown: 1000;
+    --pui-z-overlay: 1100;
+    --pui-z-modal: 1200;
+    --pui-z-toast: 1300;
+
+    /* ---------------------------------------------------------------- *
+     * Semantics - motion
+     * ---------------------------------------------------------------- */
+
+    --pui-duration-fast: 120ms;
+    --pui-duration-normal: 200ms;
+    --pui-duration-slow: 320ms;
+    --pui-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+    --pui-easing-enter: cubic-bezier(0, 0, 0, 1);
+    --pui-easing-exit: cubic-bezier(0.3, 0, 1, 1);
+  }
+
+  /* Dark theme is token values only. No component ever branches on it (ST-11). */
+  [data-pui-theme="dark"] {
+    --pui-color-background: var(--pui-color-neutral-950);
+    --pui-color-foreground: var(--pui-color-neutral-50);
+    --pui-color-surface: var(--pui-color-neutral-900);
+    --pui-color-surface-foreground: var(--pui-color-neutral-50);
+    --pui-color-muted: var(--pui-color-neutral-800);
+    --pui-color-muted-foreground: var(--pui-color-neutral-400);
+    --pui-color-primary: var(--pui-color-violet-600);
+    --pui-color-primary-hover: var(--pui-color-violet-500);
+    --pui-color-primary-active: var(--pui-color-violet-400);
+    --pui-color-primary-foreground: var(--pui-color-neutral-0);
+    --pui-color-secondary: var(--pui-color-neutral-800);
+    --pui-color-secondary-hover: var(--pui-color-neutral-700);
+    --pui-color-secondary-active: var(--pui-color-neutral-600);
+    --pui-color-secondary-foreground: var(--pui-color-neutral-50);
+    --pui-color-danger: var(--pui-color-red-500);
+    --pui-color-danger-hover: var(--pui-color-red-600);
+    --pui-color-border: var(--pui-color-neutral-800);
+    --pui-color-border-strong: var(--pui-color-neutral-700);
+    --pui-color-ring: var(--pui-color-violet-500);
+    --pui-color-overlay: rgb(2 6 23 / 70%);
+    --pui-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 40%);
+    --pui-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 50%), 0 2px 4px -2px rgb(0 0 0 / 50%);
+    --pui-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 50%), 0 4px 6px -4px rgb(0 0 0 / 50%);
+  }
+}

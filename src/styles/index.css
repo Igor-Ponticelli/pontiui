@@ -1,0 +1,25 @@
+/**
+ * PontiUI stylesheet entry point.
+ *
+ * The layer order below is the library's override contract (D-23). Everything
+ * PontiUI emits lives in one of these layers; anything the consumer writes sits
+ * outside them and therefore wins, regardless of specificity and without
+ * !important on either side.
+ *
+ * Order is significance, lowest first:
+ *   pui.tokens      custom properties only
+ *   pui.reset       per-component resets, scoped to their own class
+ *   pui.base        rules shared across every component
+ *   pui.components  the components themselves
+ *
+ * Import order below is the build's concatenation order (Phase 1). It is
+ * declared here rather than discovered by globbing, so the output is
+ * deterministic and a diff of dist/styles.css is readable.
+ */
+
+@layer pui.tokens, pui.reset, pui.base, pui.components;
+
+@import url("./tokens.css");
+@import url("./base.css");
+
+/* Components, alphabetically. One line per component, added with the component. */
