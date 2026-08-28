@@ -110,6 +110,7 @@
     --pui-font-weight-medium: 500;
     --pui-font-weight-semibold: 600;
     --pui-font-weight-bold: 700;
+    --pui-line-height-none: 0;
     --pui-line-height-tight: 1.25;
     --pui-line-height-normal: 1.5;
     --pui-line-height-relaxed: 1.75;
@@ -179,6 +180,11 @@
     --pui-duration-fast: 120ms;
     --pui-duration-normal: 200ms;
     --pui-duration-slow: 320ms;
+
+    /* Continuous indeterminate motion. Longer than the transition durations
+       because it repeats forever and a fast loop reads as agitated. */
+    --pui-duration-spin: 700ms;
+    --pui-easing-linear: linear;
     --pui-easing-standard: cubic-bezier(0.2, 0, 0, 1);
     --pui-easing-enter: cubic-bezier(0, 0, 0, 1);
     --pui-easing-exit: cubic-bezier(0.3, 0, 1, 1);
