@@ -74,27 +74,47 @@ Output: 6.13 kB unminified-source / minified, layers emitted in the declared ord
 
 ---
 
-## Phase 2 - Build and distribution pipeline `[ ]`
+## Phase 2 - Build and distribution pipeline `[x]`
 
 Goal: close the full publish-and-consume loop while the library is still trivial, so
 packaging bugs surface now instead of at release time.
 
-- [ ] Install `tsdown`
-- [ ] Create `tsdown.config.ts`: ESM + CJS, `dts: true`, per-module output,
-      `external: ["react", "react-dom"]`
-- [ ] Verify the per-module output preserves `"use client"` directives
-- [ ] Add `react` and `react-dom` to `peerDependencies` (`>=18`)
-- [ ] Configure `package.json` for publishing: `files`, `exports` (root + `./styles.css` + `./package.json`), `main`, `module`, `types`, `sideEffects: ["**/*.css"]`
-- [ ] Add `build` script chaining `build:js` (tsdown) and `build:css` (Lightning CSS)
-- [ ] Implement **Divider** as the pipeline canary (simplest possible component),
-      including its `Divider.css` - it is also the canary for the CSS build
-- [ ] Confirm the built stylesheet contains no unlayered rule (ST-12)
-- [ ] Run `npm pack --dry-run` and audit the file list
-- [ ] Install the tarball into a throwaway Vite app and render the canary
-- [ ] Add `publishConfig.access` if a scoped name is chosen (see D-11)
+- [x] Install `tsdown`
+- [x] Create `tsdown.config.ts`: ESM + CJS, `dts: true`, `unbundle` for per-module
+      output, `external` covering `react`, `react-dom` and both jsx-runtime specifiers
+- [x] Verify the per-module output preserves `"use client"` directives. Checked with a
+      throwaway probe component: the directive survives in both ESM and CJS, and
+      Divider correctly receives none, so it still renders on the server (D-08)
+- [x] Add `react` and `react-dom` to `peerDependencies` (`>=18`). `react-dom` is not
+      imported yet - Modal needs it in Phase 8, and adding a required peer later would
+      be a breaking change for consumers, so it goes in before 0.1.0 rather than after
+- [x] Configure `package.json` for publishing: `files`, `exports` (root + `./styles.css` + `./package.json`) with per-condition `types`, `main`, `module`, `types`,
+      `sideEffects: ["**/*.css"]`
+- [x] Add `build` script chaining `build:js` (tsdown) and `build:css` (Lightning CSS).
+      The clean lives in tsdown, the step that runs first, so it cannot wipe the
+      stylesheet
+- [x] Implement **Divider** as the pipeline canary, including its `Divider.css`
+- [x] Confirm the built stylesheet contains no unlayered rule (ST-12)
+- [x] Run `npm pack --dry-run` and audit the file list
+- [x] Install the tarball into a throwaway Vite app and render the canary
+- [x] Add `publishConfig.access: "public"`, required by the scoped name (D-11)
 
-**Exit criteria:** `pnpm build` emits `dist/` and a separate project can install the
-tarball, import `@igor_ponti/pontiui/styles.css` and render `<Divider />` correctly.
+**Exit criteria met.** A separate Vite app, installed **with npm rather than pnpm** so
+the package is exercised outside the toolchain that built it:
+
+- `npm install` from the tarball, then `import "@igor_ponti/pontiui/styles.css"` and
+  `import { Divider, type DividerProps } from "@igor_ponti/pontiui"`
+- the consumer's own `tsc --noEmit` passes, so the `exports` map resolves types for both
+  the ESM and CJS conditions
+- `vite build` succeeds; the library's CSS lands in the consumer's bundle at 7.7 kB,
+  1.72 kB gzipped, layers intact
+- `renderToStaticMarkup` renders every variant with no DOM, confirming Divider needs no
+  `"use client"`
+- a consumer `className` still wins over the library's layered rules
+
+One defect was found and fixed by this exercise, which is exactly why the phase exists:
+a labelled Divider was hiding its own label from assistive technology. See the component
+plan.
 
 ---
 
@@ -139,7 +159,8 @@ toggle visibly changes it.
 
 Zero-dependency components. Each one follows the full agent pipeline.
 
-- [ ] Divider (delivered in Phase 2 as the canary - revisit against its full plan)
+- [~] Divider (implemented in Phase 2 as the canary; needs tests, a11y sign-off and
+  stories to be complete against its full plan)
 - [ ] Text
 - [ ] Spinner
 - [ ] Skeleton
