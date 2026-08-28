@@ -86,6 +86,10 @@
     --pui-color-warning-foreground: var(--pui-color-neutral-950);
     --pui-color-info: var(--pui-color-blue-600);
     --pui-color-info-foreground: var(--pui-color-neutral-0);
+
+    /* Placeholder surface. Its own role rather than reusing the border colour,
+       so a consumer can tune loading states without moving every border. */
+    --pui-color-skeleton: var(--pui-color-neutral-200);
     --pui-color-border: var(--pui-color-neutral-200);
     --pui-color-border-strong: var(--pui-color-neutral-300);
     --pui-color-ring: var(--pui-color-violet-600);
@@ -191,6 +195,12 @@
     /* Continuous indeterminate motion. Longer than the transition durations
        because it repeats forever and a fast loop reads as agitated. */
     --pui-duration-spin: 700ms;
+
+    /* A calm breathing cycle, shared by Skeleton's pulse and Spinner's
+       reduced-motion fallback so the two read as one system. Deliberately slow:
+       a fast opacity cycle reads as flashing, which is the thing a
+       reduced-motion fallback is supposed to avoid. */
+    --pui-duration-pulse: 1600ms;
     --pui-easing-linear: linear;
     --pui-easing-standard: cubic-bezier(0.2, 0, 0, 1);
     --pui-easing-enter: cubic-bezier(0, 0, 0, 1);
@@ -215,6 +225,7 @@
     --pui-color-secondary-foreground: var(--pui-color-neutral-50);
     --pui-color-danger: var(--pui-color-red-500);
     --pui-color-danger-hover: var(--pui-color-red-600);
+    --pui-color-skeleton: var(--pui-color-neutral-800);
     --pui-color-border: var(--pui-color-neutral-800);
     --pui-color-border-strong: var(--pui-color-neutral-700);
     --pui-color-ring: var(--pui-color-violet-500);
