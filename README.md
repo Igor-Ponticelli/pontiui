@@ -104,7 +104,7 @@ See [Theming](./docs/theming.md) for the full token reference.
 | Button    | planned |
 | Input     | planned |
 | Textarea  | planned |
-| Text      | planned |
+| Text      | alpha   |
 | Divider   | alpha   |
 | Spinner   | alpha   |
 | Skeleton  | planned |

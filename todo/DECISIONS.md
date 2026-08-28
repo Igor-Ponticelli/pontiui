@@ -246,6 +246,28 @@ _Consistent with:_ the README already states that APIs change without notice unt
 `COMMITS.md` rule 7. In short: before `0.1.0` exists there is nothing to bump from, so a
 changeset has no question to answer.
 
+### D-25 - Text polymorphism: a restricted union of elements `[decided]`
+
+`Text` accepts `as` limited to `p | span | h1 | h2 | h3 | h4 | h5 | h6`. Props stay a
+plain interface; there are no polymorphic generics.
+
+_Rejected:_ full polymorphic generics. They type `<Text as="a" href="...">` correctly,
+but the props type becomes generic in the element, and the error a consumer sees when
+they get something wrong is a page of unresolved type parameters rather than a list of
+valid values. The library exists to be pleasant to consume.
+
+_Rejected:_ separate `Text` and `Heading` components. It duplicates every prop across
+two components and leaves `<span>` without a home, so the question just moves.
+
+_Cost accepted:_ one documented cast in the implementation. TypeScript resolves the JSX
+ref of a union of intrinsic tags to a single concrete element type rather than to their
+common supertype, so a `Ref<HTMLElement>` has to be narrowed at the call site. It is
+sound - every member is an HTMLElement - and it is paid once by the library rather than
+repeatedly by consumers.
+
+_Consequence:_ `as` is the only way to get an element `Text` does not list. Adding a
+member later is additive and therefore a minor (E-5); removing one is a major.
+
 ---
 
 ## Open

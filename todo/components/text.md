@@ -1,9 +1,10 @@
 # Text
 
-**Status:** `[ ]` not started
+**Status:** `[x]` implemented. Tests, a11y sign-off and stories still pending -
+Phases 3, 4 and 5.
 **Phase:** 5
 **Depends on:** typography tokens
-**Blocked by:** open question below on the `as` prop
+**Blocked by:** nothing - the `as` question is resolved in D-25
 **Client component:** no
 
 ## Goal
@@ -24,8 +25,8 @@ consistent typography.
 
 | Prop        | Type                                                         | Default     | Description          |
 | ----------- | ------------------------------------------------------------ | ----------- | -------------------- |
-| `as`        | element type                                                 | `"p"`       | Rendered element     |
-| `size`      | `"xs" \| "sm" \| "md" \| "lg" \| "xl" \| "2xl"`              | `"md"`      | Type scale step      |
+| `as`        | `"p" \| "span" \| "h1"…"h6"`                                 | `"p"`       | Rendered element     |
+| `size`      | `"xs"…"7xl"` (11 steps)                                      | `"md"`      | Type scale step      |
 | `weight`    | `"regular" \| "medium" \| "semibold" \| "bold"`              | `"regular"` | Font weight          |
 | `tone`      | `"default" \| "muted" \| "primary" \| "danger" \| "success"` | `"default"` | Semantic color       |
 | `align`     | `"start" \| "center" \| "end"`                               | -           | Text alignment       |
@@ -39,8 +40,14 @@ consistent typography.
 
 ## Sizes
 
-Six steps. Each step sets font size, line height and letter spacing together, defined
-once in `tokens.css` so the ratios stay consistent.
+Eleven steps: `xs, sm, md, lg, xl, 2xl, 3xl, 4xl, 5xl, 6xl, 7xl`. The four display steps
+were added with this component; the plan originally called for six.
+
+Each step sets font size, line height and letter spacing together. From `2xl` upward the
+leading tightens and from `3xl` upward the tracking goes slightly negative, because large
+text set with body ratios reads loose. Sizes come from `tokens.css`; the pairing of the
+three per step lives in `Text.css`, since it is a typographic decision about this
+component rather than a token.
 
 ## States
 
@@ -52,16 +59,25 @@ None.
 2. `as` changes the element without changing the visual style. Visual and semantic
    levels are independent by design.
 3. `truncate` clamps to one line with an ellipsis and requires a constrained width.
-4. `lineClamp` clamps to N lines. `truncate` and `lineClamp` together is invalid;
-   decide which wins.
+4. `lineClamp` clamps to N lines. **`lineClamp` wins** when both are set: a line count
+   is the more specific instruction, and `truncate` is the sugar for the common case. A
+   `lineClamp` of `0` or less is ignored, so `truncate` still applies.
+   The line count reaches CSS as an inline custom property - the one sanctioned use of
+   inline `style` under ST-1, since a line count cannot be a token. The consumer's own
+   `style` is spread after it and therefore wins.
 5. `tone` maps to semantic color tokens only, never to a raw color.
 
 ## Implementation notes
 
-- The `as` prop is the only genuinely tricky part. Fully generic polymorphic typing is
-  verbose and produces poor error messages. See open questions.
-- No margin by default. Spacing is the parent's responsibility, so the component
-  composes predictably.
+- The `as` prop is a restricted union (D-25), so props stay a plain interface. The cost
+  is one documented cast on the ref: TypeScript resolves the JSX ref of a union of
+  intrinsic tags to one concrete element type rather than to their common supertype. It
+  is sound, since every member is an HTMLElement, and it is paid once here instead of by
+  every consumer in the form of generic error messages.
+- No margin by default, and the reset layer clears the user-agent margin on `h1`-`h6`
+  explicitly, since the library ships no global reset (D-04).
+- Multi-line clamping uses the `-webkit-` trio. There is still no unprefixed
+  implementation with real support.
 
 ## Accessibility
 
@@ -73,9 +89,14 @@ None.
 
 ## Tokens used
 
-`--pui-font-sans`, the full `--pui-text-*` scale, `--pui-color-foreground`,
-`--pui-color-muted`, `--pui-color-primary`, `--pui-color-danger`,
-`--pui-color-success`.
+`--pui-font-sans`, `--pui-font-size-{xs…7xl}`, `--pui-font-weight-*`,
+`--pui-line-height-{normal,tight}`, `--pui-letter-spacing-{normal,tight}`,
+`--pui-color-foreground`, `--pui-color-muted-foreground`, `--pui-color-primary`,
+`--pui-color-danger`, `--pui-color-success`.
+
+Four tokens were added: `--pui-font-size-{4xl,5xl,6xl,7xl}`, for display and hero text.
+Like the rest of the scale they derive from `--pui-font-size-base`, so the D-22 type axis
+still moves all eleven steps together.
 
 ## Tests
 
@@ -83,7 +104,10 @@ None.
 - `as` changes the element and preserves visual styling
 - Each tone applies the correct semantic color
 - `truncate` and `lineClamp` behave as specified
-- Ref forwards to the rendered element
+- **`lineClamp` wins when both are set, and a non-positive `lineClamp` falls back to
+  `truncate`**
+- A consumer `style` survives alongside the injected line-count property
+- Ref forwards to the rendered element, for both a heading and a `span`
 
 ## Documentation
 
@@ -92,11 +116,14 @@ demonstrating that `size` and `as` are independent.
 
 ## Open questions
 
-- **`as` typing:** full polymorphic generics, a restricted union of allowed elements, or
-  no `as` at all with separate `Heading` and `Text` components? A restricted union is
-  the pragmatic middle ground. Needs a call before implementation.
-- Should `truncate` and `lineClamp` be one prop instead of two?
-- Is a separate `Heading` component clearer for consumers than `<Text as="h2">`?
+All resolved.
+
+- ~~**`as` typing**~~ Restricted union of `p | span | h1…h6`. Recorded as **D-25**.
+- ~~Should `truncate` and `lineClamp` be one prop instead of two?~~ Two. `truncate`
+  reads better than `lineClamp={1}` and covers the overwhelmingly common case; merging
+  them into one prop taking `number | "single"` trades a clear API for a clever one.
+- ~~Is a separate `Heading` component clearer?~~ No. It duplicates every prop across two
+  components and leaves `<span>` homeless, so the question only moves. See D-25.
 
 ## Definition of done
 
