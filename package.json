@@ -10,8 +10,7 @@
     "react",
     "ui",
     "components",
-    "design-system",
-    "tailwind"
+    "design-system"
   ],
   "packageManager": "pnpm@11.20.0",
   "engines": {
